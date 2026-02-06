@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8"/>
+  <meta http-equiv="Content-Language" content="es" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
   <title>Mi Moto al Día — App</title>
   <meta name="theme-color" content="#0f4c81"/>
@@ -29,6 +30,10 @@
   --shadow2:0 18px 40px rgba(2,6,23,.14);
 
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+
+
+  --tabsH: 78px;
+  --extraB: 12px;
 }
 
 *{box-sizing:border-box}
@@ -40,7 +45,7 @@ body{
     radial-gradient(900px 600px at 90% 0%, rgba(14,165,233,.14), transparent 55%),
     var(--bg);
   color:var(--ink);
-  padding-bottom:calc(78px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(var(--tabsH, 78px) + var(--extraB, 12px) + env(safe-area-inset-bottom, 0px));
 }
 a{color:inherit}
 .small{font-size:12px;color:var(--muted);line-height:1.35}
@@ -313,6 +318,79 @@ th{font-size:12px;color:#334155;text-align:left;font-weight:900}
 #screen-combustible .fuel-check{display:flex;align-items:center;gap:10px;padding-top:6px;}
 #screen-combustible .fuel-check input[type=checkbox]{width:22px;height:22px}
 
+
+
+/* ===== Motos: diseño 'Listado' (compacto) ===== */
+#motosListCard .motos-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:2px}
+#motosListCard .motos-head h4{margin:0;font-size:14px;letter-spacing:.2px}
+#motosListCard .motos-head .head-actions{display:flex;align-items:center;gap:10px}
+
+.moto-item{
+  display:flex;align-items:stretch;justify-content:space-between;gap:12px;
+  padding:14px;
+  border-radius:18px;
+  background:rgba(255,255,255,.92);
+  border:1px solid rgba(15,23,42,.08);
+}
+.moto-left{display:flex;gap:12px;align-items:center;min-width:0}
+.moto-ico{
+  width:44px;height:44px;flex:0 0 44px;
+  border-radius:16px;
+  background:rgba(29,78,216,.10);
+  border:1px solid rgba(29,78,216,.12);
+  display:flex;align-items:center;justify-content:center;
+}
+.moto-ico svg{width:22px;height:22px;display:block;color:#1e3a8a}
+.moto-meta{min-width:0}
+.moto-name{display:flex;align-items:center;gap:8px;min-width:0}
+.moto-name b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:50vw}
+.moto-active-tag{
+  display:inline-flex;align-items:center;
+  padding:4px 10px;border-radius:999px;
+  font-size:11px;font-weight:900;
+  background:rgba(34,197,94,.12);
+  border:1px solid rgba(34,197,94,.18);
+  color:#166534;
+}
+.moto-sub{margin-top:4px}
+
+.moto-actions{display:flex;gap:10px;align-items:center;flex:0 0 auto}
+.moto-actions .btn, .moto-actions .danger{width:auto;min-width:88px;padding:10px 12px;border-radius:14px}
+@media(max-width:420px){
+  .moto-actions{flex-direction:column;align-items:stretch;gap:8px}
+  .moto-actions .btn, .moto-actions .danger{min-width:96px}
+  .moto-name b{max-width:44vw}
+}
+
+/* ===== Motos: formulario compacto (Nueva/Editar) ===== */
+#motoFormCard .moto-form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  align-items:start;
+}
+#motoFormCard .moto-form-grid > div{
+  display:flex;
+  flex-direction:column;
+}
+#motoFormCard .moto-form-grid .span2{grid-column:1 / -1;}
+#motoFormCard .moto-form-grid label{margin-bottom:6px}
+#motoFormCard .moto-form-grid input,
+#motoFormCard .moto-form-grid select{
+  padding:12px 12px;
+}
+#motoFormCard .moto-actions-row{
+  display:flex;
+  gap:10px;
+}
+#motoFormCard .moto-actions-row > button{
+  flex:1;
+}
+@media(max-width:360px){
+  #motoFormCard .moto-form-grid{grid-template-columns:1fr;}
+  #motoFormCard .moto-form-grid .span2{grid-column:auto;}
+}
+
 /* Hide old buttons moved to drawer (kept for compat) */
 #btnExportXls, #goCombustible{ display:none !important; }
 </style>
@@ -490,9 +568,7 @@ th{font-size:12px;color:#334155;text-align:left;font-weight:900}
             <div class="small" style="margin-top:6px">
               Tip: te sugerimos un valor según tu moto (puedes cambiarlo).
             </div>
-            </div>
           </div>
-        </div>
           <div class="small" style="margin-top:10px">
             Se guardará como componente y aparecerá también en <b>Estado</b>.
           </div>
@@ -655,17 +731,27 @@ th{font-size:12px;color:#334155;text-align:left;font-weight:900}
         </div>
       </div>
       <div class="hr"></div>
+      <div class="motos-head">
+        <h4>Listado</h4>
+        <div class="head-actions">
+          <button class="ghost" id="btnMotosExport" style="width:auto;padding:10px 12px;border-radius:14px">Exportar</button>
+        </div>
+      </div>
+      <div class="hr"></div>
+
       <div id="motosList"></div>
     </div>
 
     <div class="card" id="motoFormCard" style="display:none">
       <h3 id="motoFormTitle" style="margin:0 0 10px">Nueva moto</h3>
 
-      <div class="row">
+      <!-- Formulario compacto (orden solicitado) -->
+      <div class="moto-form-grid">
         <div>
           <label>Nombre (ej: “CR5”, “NKD”, “La roja”)</label>
           <input id="mNombre" placeholder="Mi moto"/>
         </div>
+
         <div>
           <label>Uso</label>
           <select id="mUso">
@@ -674,28 +760,74 @@ th{font-size:12px;color:#334155;text-align:left;font-weight:900}
             <option value="trabajo">Trabajo (reparto)</option>
           </select>
         </div>
-      </div>
 
-      <div class="hr"></div>
+        <div>
+          <label>Placa (opcional)</label>
+          <input id="mPlaca" placeholder="Ej: ABC12D" />
+        </div>
 
-      <!-- Datos opcionales (para completar ficha técnica) -->
-      <div class="row" style="margin-top:6px">
+        <div>
+          <label>Kilometraje actual</label>
+          <input id="mKm" type="number" inputmode="numeric" placeholder="Ej: 32500"/>
+        </div>
+
         <div>
           <label>Marca (opcional)</label>
           <input id="mMarca" placeholder="Ej: AKT, Bajaj, Yamaha" />
         </div>
+
         <div>
           <label>Modelo / línea (opcional)</label>
           <input id="mModelo" placeholder="Ej: NKD 125, NS200" />
         </div>
-      </div>
 
-      <div class="row" style="margin-top:6px">
         <div>
           <label>Año (opcional)</label>
           <input id="mAnio" placeholder="Ej: 2022" inputmode="numeric" />
         </div>
+
         <div>
+          <!-- FREE -->
+          <div id="motoTipoFreeBox">
+            <label>Cilindraje (rango recomendado)</label>
+            <select id="mTipoFree">
+              <option value="110">110–125 cc</option>
+              <option value="150">150–200 cc</option>
+              <option value="250">250–300 cc</option>
+            </select>
+          </div>
+
+          <!-- PRO -->
+          <div id="motoTipoProBox" style="display:none;margin-top:10px">
+            <label>Cilindraje exacto (PRO)</label>
+            <select id="mTipoPro">
+              <option value="110">110 cc</option>
+              <option value="125">125 cc</option>
+              <option value="150">150 cc</option>
+              <option value="160">160 cc</option>
+              <option value="180" selected>180 cc</option>
+              <option value="200">200 cc</option>
+              <option value="250">250 cc</option>
+              <option value="300">300 cc</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div>
+          <label>Unidad</label>
+          <select id="mTankUnit">
+            <option value="L">Litros (L)</option>
+            <option value="gal">Galones (gal)</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Capacidad del tanque (opcional)</label>
+          <input id="mTankCap" type="number" inputmode="decimal" step="0.01" placeholder="Ej: 11.5"/>
+        </div>
+
+        <div class="span2">
           <label>Combustible (opcional)</label>
           <select id="mCombustible">
             <option value="">Sin especificar</option>
@@ -707,77 +839,7 @@ th{font-size:12px;color:#334155;text-align:left;font-weight:900}
         </div>
       </div>
 
-      <!-- FREE -->
-      <div id="motoTipoFreeBox">
-        <label>Cilindraje (rango recomendado)</label>
-        <select id="mTipoFree">
-          <option value="110">110–125 cc</option>
-          <option value="150">150–200 cc</option>
-          <option value="250">250–300 cc</option>
-        </select>
-        <div class="small" style="margin-top:6px">
-          En FREE trabajamos por rangos (tu <b>180</b> entra en <b>150–200</b>).
-        </div>
-      </div>
-
-      <!-- PRO -->
-      <div id="motoTipoProBox" style="display:none;margin-top:10px">
-        <div class="row">
-          <div>
-            <label>Cilindraje exacto (PRO)</label>
-            <select id="mTipoPro">
-              <option value="110">110 cc</option>
-              <option value="125">125 cc</option>
-              <option value="150">150 cc</option>
-              <option value="160">160 cc</option>
-              <option value="180" selected>180 cc</option>
-              <option value="200">200 cc</option>
-              <option value="250">250 cc</option>
-              <option value="300">300 cc</option>
-              <option value="custom">Personalizado…</option>
-            </select>
-          </div>
-          <div>
-            <label>Personalizado (cc)</label>
-            <input id="mTipoCustom" type="number" inputmode="numeric" placeholder="Ej: 184" disabled/>
-          </div>
-        </div>
-        <div class="small" style="margin-top:6px">
-          En PRO la app usa el cilindraje exacto para afinar intervalos.
-        </div>
-      </div>
-
-      <div class="hr"></div>
-
-      <div class="row">
-        <div>
-          <label>Kilometraje actual</label>
-          <input id="mKm" type="number" inputmode="numeric" placeholder="Ej: 32500"/>
-        </div>
-        <div>
-          <label>&nbsp;</label>
-          <div class="small">Tip: luego puedes cambiar el km en Inicio.</div>
-        </div>
-      </div>
-
-      <div class="hr"></div>
-
-      <div class="row">
-        <div>
-          <label>Capacidad del tanque (opcional)</label>
-          <input id="mTankCap" type="number" inputmode="decimal" step="0.01" placeholder="Ej: 11.5"/>
-        </div>
-        <div>
-          <label>Unidad</label>
-          <select id="mTankUnit">
-            <option value="L">Litros (L)</option>
-            <option value="gal">Galones (gal)</option>
-          </select>
-          <div class="small" style="margin-top:6px">Se usa para sugerir la cantidad cuando marcas <b>Tanque lleno</b> en Combustible.</div>
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:10px">
+      <div class="moto-actions-row" style="margin-top:12px">
         <button class="primary" id="btnGuardarMoto">Guardar moto</button>
         <button class="btn" id="btnCancelarMoto">Cancelar</button>
       </div>
@@ -1045,6 +1107,27 @@ th{font-size:12px;color:#334155;text-align:left;font-weight:900}
 window.requestIdleCallback = window.requestIdleCallback || function(cb){return setTimeout(function(){cb({didTimeout:false,timeRemaining:function(){return 0;}});},1);};
 window.cancelIdleCallback = window.cancelIdleCallback || function(id){clearTimeout(id);};
 
+// Auto-ajuste del espacio inferior: evita que botones queden tapados por la barra inferior
+(function(){
+  let t = null;
+  function updateBottomSafePadding(){
+    const tabs = document.querySelector('.tabs');
+    if(!tabs) return;
+    const h = Math.round(tabs.getBoundingClientRect().height || tabs.offsetHeight || 0);
+    if(h > 0) document.documentElement.style.setProperty('--tabsH', h + 'px');
+  }
+  function schedule(){
+    if(t) clearTimeout(t);
+    t = setTimeout(updateBottomSafePadding, 80);
+  }
+  window.addEventListener('load', schedule, {passive:true});
+  window.addEventListener('resize', schedule, {passive:true});
+  window.addEventListener('orientationchange', schedule, {passive:true});
+  // Por si cambian alturas por fuentes/animaciones
+  setTimeout(updateBottomSafePadding, 250);
+})();
+
+
 /* =========================
    Mi Moto al Día — MVP
    Cambios:
@@ -1239,9 +1322,11 @@ function openMotoForm(mode, moto){
     document.getElementById('mUso').value = moto.uso || 'diario';
 
     const mm = document.getElementById('mMarca');
+    const pl = document.getElementById('mPlaca');
     const mdl = document.getElementById('mModelo');
     const an = document.getElementById('mAnio');
     const cf = document.getElementById('mCombustible');
+    if(pl) pl.value = moto.placa || '';
     if(mm) mm.value = moto.marca || '';
     if(mdl) mdl.value = moto.modelo || '';
     if(an) an.value = moto.anio ? String(moto.anio) : '';
@@ -1254,27 +1339,22 @@ function openMotoForm(mode, moto){
         document.getElementById('mTipoFree').value = moto.tipoGroup || '150';
       }else{
         const sel = document.getElementById('mTipoPro');
-        const custom = document.getElementById('mTipoCustom');
         if(moto.exactCc && Number.isFinite(Number(moto.exactCc))){
-          const cc = String(Math.round(Number(moto.exactCc)));
-          const hasOpt = Array.from(sel.options).some(o=>o.value===cc);
-          if(hasOpt){
-            sel.value = cc;
-            custom.value = '';
-            custom.disabled = true
-          }else{
-            sel.value = 'custom';
-            custom.disabled = false;
-            custom.value = cc;
+          const cc = Math.round(Number(moto.exactCc));
+          const opts = Array.from(sel.options).map(o=>Number(o.value)).filter(n=>Number.isFinite(n));
+          if(opts.length){
+            // Elegimos la opcion mas cercana para evitar romper layout (sin 'Personalizado')
+            let best = opts[0];
+            let bestDiff = Math.abs(best-cc);
+            for(const v of opts){
+              const d = Math.abs(v-cc);
+              if(d < bestDiff){ best=v; bestDiff=d; }
+            }
+            sel.value = String(best);
+            if(bestDiff>0) toast('Cilindraje ajustado a la opcion mas cercana ('+best+' cc).', 'ok');
           }
-        }else{
-          // si no hay exactCc, intentamos mapear por grupo
-          const map = { '110':'125', '150':'180', '250':'250' };
-          const grp = (moto.tipoGroup || '150');
-          const guess = (map[grp] || '180');
-          sel.value = guess;
-          custom.value = '';
-          custom.disabled = true;
+        } else {
+          sel.value = '180';
         }
       }
     }catch(e){}
@@ -1973,9 +2053,9 @@ if(_elCosto){
   list.innerHTML="";
   state.motos.forEach(m=>{
     const div=document.createElement("div");
-    div.className="card";
-    div.style.boxShadow="none";
-    div.style.border="1px solid #eef2f7";
+    div.className="";
+    
+    
 
     const cilTxt = (state.pro && m.exactCc) ? `${m.exactCc} cc` : tipoRangoLabel(m.tipoGroup);
 
@@ -1987,15 +2067,30 @@ if(_elCosto){
     const combTxt = m.combustible ? String(m.combustible) : '';
 
     div.innerHTML = `
-      <div class="inline">
-        <div>
-          <b>${escapeHtml(m.nombre)}</b>
-          <div class="small">${(fichaTxt? escapeHtml(fichaTxt)+" • " : "")}${cilTxt} • ${usoLabel(m.uso)} • ${fmt(m.kmActual)} km${(m.tankCap&&m.tankUnit)?` • Tanque: ${m.tankCap} ${m.tankUnit==='gal'?'gal':'L'}`:''}${(combTxt?` • ${escapeHtml(combTxt)}`:'')}</div>
+      <div class="moto-item">
+        <div class="moto-left">
+          <div class="moto-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M7 17a3 3 0 1 0 0 .01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M17 17a3 3 0 1 0 0 .01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M10 17h4l2-5h-5l-2-4H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="moto-meta">
+            <div class="moto-name">
+              <b>${escapeHtml(m.nombre)}</b>
+              ${m.id===state.activeMotoId ? '<span class="moto-active-tag">Activa</span>' : ''}
+            </div>
+            <div class="small moto-sub">
+              ${(fichaTxt? escapeHtml(fichaTxt)+" • " : "")}${cilTxt} • ${usoLabel(m.uso)} • ${fmt(m.kmActual)} km${(m.tankCap&&m.tankUnit)?` • Tanque: ${m.tankCap} ${m.tankUnit==='gal'?'gal':'L'}`:''}${(combTxt?` • ${escapeHtml(combTxt)}`:'')}
+            </div>
+          </div>
         </div>
-        <div class="row" style="max-width:320px">
-          <button class="btn" data-act="${m.id}">Usar</button>
+
+        <div class="moto-actions">
+          ${m.id===state.activeMotoId ? '' : `<button class="btn" data-act="${m.id}">Usar</button>`}
           <button class="btn" data-edit="${m.id}">Editar</button>
-          <button class="danger" data-del="${m.id}">Eliminar</button>
+          <button class="danger" data-del="${m.id}">Borrar</button>
         </div>
       </div>
     `;
@@ -2234,10 +2329,12 @@ document.getElementById("btnNuevaMoto").addEventListener("click", ()=>{
   const motosListCard = document.getElementById("motosListCard");
   if(motosListCard) motosListCard.style.display = "none";
   document.getElementById("mNombre").value="";
+  const _pl = document.getElementById("mPlaca");
   const _mm = document.getElementById("mMarca");
   const _mdl = document.getElementById("mModelo");
   const _an = document.getElementById("mAnio");
   const _cf = document.getElementById("mCombustible");
+  if(_pl) _pl.value = "";
   if(_mm) _mm.value = "";
   if(_mdl) _mdl.value = "";
   if(_an) _an.value = "";
@@ -2245,15 +2342,29 @@ document.getElementById("btnNuevaMoto").addEventListener("click", ()=>{
   document.getElementById("mUso").value="diario";
   document.getElementById("mTipoFree").value="150";
   document.getElementById("mTipoPro").value="180";
-  document.getElementById("mTipoCustom").value="";
-  document.getElementById("mTipoCustom").disabled = true;
-  document.getElementById("mKm").value="";
+document.getElementById("mKm").value="";
   const _tc = document.getElementById("mTankCap");
   const _tu = document.getElementById("mTankUnit");
   if(_tc) _tc.value = "";
   if(_tu) _tu.value = "L";
 });
 
+
+
+/* Tips flotantes (para no romper el grid del formulario) */
+(function(){
+  const onceKey='__motoTipsBound';
+  if(window[onceKey]) return;
+  window[onceKey]=true;
+  const kmEl=document.getElementById('mKm');
+  const tankEl=document.getElementById('mTankCap');
+  const freeEl=document.getElementById('mTipoFree');
+  const proEl=document.getElementById('mTipoPro');
+  if(kmEl) kmEl.addEventListener('focus', ()=>toast('Tip: luego puedes cambiar el km en Inicio.', 'ok'));
+  if(tankEl) tankEl.addEventListener('focus', ()=>toast('Se usa para sugerir la cantidad cuando marcas Tanque lleno en Combustible.', 'ok'));
+  if(freeEl) freeEl.addEventListener('focus', ()=>toast('En FREE trabajamos por rangos (ej: 180 entra en 150–200).', 'ok'));
+  if(proEl) proEl.addEventListener('focus', ()=>toast('En PRO usamos el cilindraje exacto para afinar intervalos.', 'ok'));
+})();
 /* Cancelar moto */
 document.getElementById("btnCancelarMoto").addEventListener("click", ()=>{
   document.getElementById("motoFormCard").style.display="none";
@@ -2264,13 +2375,6 @@ document.getElementById("btnCancelarMoto").addEventListener("click", ()=>{
   if(motosListCard) motosListCard.style.display = "";
 });
 
-/* PRO custom CC */
-document.getElementById("mTipoPro").addEventListener("change", (e)=>{
-  const isCustom = e.target.value === "custom";
-  const custom = document.getElementById("mTipoCustom");
-  custom.disabled = !isCustom;
-  if(!isCustom) custom.value = "";
-});
 
 /* Guardar moto */
 document.getElementById("btnGuardarMoto").addEventListener("click", ()=>{
@@ -2284,6 +2388,7 @@ document.getElementById("btnGuardarMoto").addEventListener("click", ()=>{
   const uso = document.getElementById("mUso").value;
   const kmAct = nn(km(document.getElementById("mKm").value), 0);
   // Datos de identificación (para futuras funciones/IA y cálculos)
+  const placa = (document.getElementById("mPlaca")?.value || "").trim();
   const marca = (document.getElementById("mMarca")?.value || "").trim();
   const modelo = (document.getElementById("mModelo")?.value || "").trim();
   const anioRaw = (document.getElementById("mAnio")?.value || "").trim();
@@ -2296,17 +2401,9 @@ document.getElementById("btnGuardarMoto").addEventListener("click", ()=>{
   if(!state.pro){
     tipoGroup = document.getElementById("mTipoFree").value; // 110/150/250
   } else {
-    let sel = document.getElementById("mTipoPro").value;
-    if(sel === "custom"){
-      const customVal = km(document.getElementById("mTipoCustom").value);
-      if(customVal===null || customVal<50 || customVal>999){
-        alert("Cilindraje personalizado inválido (ej: 180).");
-        return;
-      }
-      exactCc = Number(customVal);
-    } else {
-      exactCc = Number(sel);
-    }
+    const sel = document.getElementById("mTipoPro").value;
+    exactCc = Number(sel);
+
 
     if(exactCc <= 125) tipoGroup = "110";
     else if(exactCc <= 200) tipoGroup = "150";
@@ -2324,6 +2421,7 @@ document.getElementById("btnGuardarMoto").addEventListener("click", ()=>{
       m.nombre = nombre;
       m.uso = uso;
       m.kmActual = kmAct;
+      if(placa) m.placa = placa; else delete m.placa;
       if(marca) m.marca = marca; else delete m.marca;
       if(modelo) m.modelo = modelo; else delete m.modelo;
       if(Number.isFinite(anio) && anio > 1900) m.anio = anio; else delete m.anio;
@@ -2365,6 +2463,7 @@ document.getElementById("btnGuardarMoto").addEventListener("click", ()=>{
   // Nueva moto
   const moto = makeMotoFromTemplate({nombre,tipoGroup,uso,kmActual:kmAct, exactCc, isPro: state.pro});
   // Guardar los datos ingresados (no afecta cálculos actuales, pero sirve para futuras mejoras)
+  if(placa) moto.placa = placa;
   if(marca) moto.marca = marca;
   if(modelo) moto.modelo = modelo;
   if(Number.isFinite(anio) && anio > 1900) moto.anio = anio;
@@ -2571,6 +2670,13 @@ document.getElementById("btnReset").addEventListener("click", ()=>{
 
 /* Export XLS (igual que antes, mantenido) */
 document.getElementById("btnExportXls").addEventListener("click", exportarXls);
+
+// Exportar también desde Motos (solo UI; reusa el mismo exportarXls)
+const _btnMotosExport = document.getElementById("btnMotosExport");
+if(_btnMotosExport) _btnMotosExport.addEventListener("click", exportarXls);
+
+
+
 
 /* ===== Combustible: navegación y acciones ===== */
 document.getElementById("goCombustible") && document.getElementById("goCombustible").addEventListener("click", ()=>{
