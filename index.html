@@ -1,0 +1,2864 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>Mi Moto al Día — App</title>
+  <meta name="theme-color" content="#0f4c81"/>
+
+  <style>
+:root{
+  --bg:#f4f6fb;
+  --surface:#ffffff;
+  --surface2:#f8fafc;
+  --ink:#0b1220;
+  --muted:#64748b;
+  --line:rgba(15,23,42,.08);
+
+  --brand:#1d4ed8;
+  --brand2:#0ea5e9;
+  --brand3:#0f4c81;
+
+  --okbg:#dcfce7; --ok:#166534;
+  --soonbg:#fef9c3; --soon:#854d0e;
+  --latebg:#fee2e2; --late:#991b1b;
+
+  --radius:18px;
+  --radius2:22px;
+  --shadow:0 10px 28px rgba(2,6,23,.08);
+  --shadow2:0 18px 40px rgba(2,6,23,.14);
+
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 700px at 20% -10%, rgba(29,78,216,.18), transparent 55%),
+    radial-gradient(900px 600px at 90% 0%, rgba(14,165,233,.14), transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  padding-bottom:calc(78px + env(safe-area-inset-bottom, 0px));
+}
+a{color:inherit}
+.small{font-size:12px;color:var(--muted);line-height:1.35}
+.mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+
+.wrap{max-width:980px;margin:0 auto;padding:14px}
+@media(min-width:980px){.wrap{padding:18px}}
+
+header{
+  position:sticky;top:0;z-index:50;
+  padding:calc(12px + env(safe-area-inset-top, 0px)) 14px 12px;
+  color:#fff;
+  background:
+    radial-gradient(900px 500px at 20% -20%, rgba(255,255,255,.22), transparent 55%),
+    linear-gradient(135deg, #0b3d6e, #0f4c81, #1d4ed8);
+  box-shadow:0 12px 28px rgba(2,6,23,.16);
+  border-bottom:1px solid rgba(255,255,255,.10);
+  backdrop-filter:saturate(1.2) blur(10px);
+}
+header .top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+header .brand{display:flex;align-items:center;gap:12px;min-width:0}
+header h1{margin:0;font-size:16px;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .tagline{margin:2px 0 0;font-size:12px;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52vw}
+
+.appLogo{
+  width:38px;height:38px;flex:0 0 38px;
+  border-radius:14px;
+  background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 24px rgba(0,0,0,.22);
+}
+.appLogo svg{width:22px;height:22px;display:block}
+
+.headerActions{display:flex;align-items:center;gap:10px}
+.menuBtn{
+  width:auto;
+  padding:10px 12px;
+  border-radius:14px;
+  background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.18);
+  color:#fff;
+  font-weight:900;
+  cursor:pointer;
+}
+.menuBtn:active{transform:translateY(1px)}
+.pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 10px;border-radius:999px;
+  font-size:12px;font-weight:900;
+  background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.18);
+}
+.pill .dot{width:8px;height:8px;border-radius:999px;background:#22c55e}
+.pill.soon .dot{background:#fbbf24}
+.pill.ok .dot{background:#22c55e}
+.pill.late .dot{background:#ef4444}
+
+.card{
+  background:rgba(255,255,255,.92);
+  border:1px solid var(--line);
+  border-radius:var(--radius2);
+  padding:14px;
+  box-shadow:var(--shadow);
+  margin-bottom:12px;
+}
+.card.soft{
+  background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(248,250,252,.92));
+}
+.hr{height:1px;background:rgba(15,23,42,.08);margin:12px 0}
+.hint{background:rgba(248,250,252,.92);border:1px solid rgba(15,23,42,.08);border-radius:16px;padding:12px}
+
+label{display:block;font-size:12px;color:#334155;margin-bottom:6px;font-weight:800}
+input,select,button,textarea{
+  width:100%;
+  border-radius:16px;
+  border:1px solid rgba(15,23,42,.10);
+  background:rgba(255,255,255,.92);
+  padding:12px 12px;
+  font-size:14px;
+}
+textarea{min-height:44px;resize:vertical}
+button{cursor:pointer;font-weight:900;border:0}
+button:focus-visible{outline:3px solid rgba(29,78,216,.26);outline-offset:2px}
+
+.row{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:760px){.row{grid-template-columns:1fr 1fr}}
+.inline{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.inline > *{flex:1;min-width:180px}
+.right{display:flex;justify-content:flex-end}
+
+.btn{
+  background:rgba(15,23,42,.06);
+  color:var(--ink);
+  border:1px solid rgba(15,23,42,.08);
+}
+.primary{
+  background:linear-gradient(135deg, var(--brand), var(--brand2));
+  color:#fff;
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 16px 34px rgba(29,78,216,.24);
+}
+.primary:active{transform:translateY(1px);box-shadow:0 10px 22px rgba(29,78,216,.22)}
+.ghost{background:rgba(248,250,252,.92);border:1px solid rgba(15,23,42,.08);color:var(--ink)}
+.danger{background:#ef4444;color:#fff}
+
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 10px;border-radius:999px;
+  font-size:11px;font-weight:900;
+  background:#eef2ff;color:#3730a3;
+}
+.lock{display:inline-flex;gap:6px;align-items:center}
+
+.kpis{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.kpi{
+  flex:1;min-width:120px;
+  border-radius:18px;
+  background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(248,250,252,.92));
+  border:1px solid rgba(15,23,42,.08);
+  padding:12px;
+}
+.kpi b{font-size:18px}
+
+.ok{background:var(--okbg);color:var(--ok)}
+.soon{background:var(--soonbg);color:var(--soon)}
+.late{background:var(--latebg);color:var(--late)}
+
+table{width:100%;border-collapse:separate;border-spacing:0}
+th,td{border-bottom:1px solid rgba(15,23,42,.06);padding:10px;font-size:13px;vertical-align:top}
+th{font-size:12px;color:#334155;text-align:left;font-weight:900}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.backbtn{
+  width:auto;padding:10px 12px;border-radius:14px;
+  background:rgba(29,78,216,.12);color:#1e3a8a;font-weight:900;
+  border:1px solid rgba(29,78,216,.12);
+}
+.backbtn:active{transform:translateY(1px)}
+
+.mutebox{
+  background:rgba(248,250,252,.90);
+  border:1px dashed rgba(15,23,42,.14);
+  border-radius:18px;padding:12px;
+}
+
+/* Toast */
+#toast{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  top: calc(72px + env(safe-area-inset-top, 0px));
+  width: min(560px, calc(100% - 24px));
+  z-index: 120;
+  pointer-events:none;
+}
+.toast-item{
+  margin-top:8px;
+  padding:12px 14px;
+  border-radius:16px;
+  background:#0b1220;
+  color:#fff;
+  box-shadow:0 16px 34px rgba(0,0,0,.22);
+  font-weight:900;
+  font-size:13px;
+  opacity:0;
+  transform:translateY(8px);
+  transition:opacity .18s ease, transform .18s ease;
+}
+.toast-item.show{opacity:1;transform:translateY(0)}
+.toast-item.ok{background:#0b1220}
+.toast-item.soon{background:#854d0e}
+.toast-item.late{background:#991b1b}
+
+/* Drawer */
+#drawerBackdrop{position:fixed;inset:0;background:rgba(2,6,23,.46);z-index:80;display:none}
+#drawer{
+  position:fixed;top:0;bottom:0;right:0;
+  width:min(88vw, 360px);
+  background:rgba(255,255,255,.94);
+  border-left:1px solid rgba(15,23,42,.08);
+  z-index:90;
+  transform:translateX(110%);
+  transition:transform .2s ease;
+  box-shadow:-18px 0 40px rgba(0,0,0,.22);
+  padding:14px;
+  padding-top:calc(14px + env(safe-area-inset-top, 0px));
+  display:flex;flex-direction:column;gap:10px;
+  backdrop-filter: blur(14px);
+}
+#drawer.open{transform:translateX(0)}
+#drawer .drawerHeader{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:10px;border-bottom:1px solid rgba(15,23,42,.08)}
+#drawer .drawerHeader b{font-size:14px}
+#drawer .drawerBtn{
+  width:100%;
+  display:flex;align-items:center;gap:12px;
+  padding:12px 12px;
+  border-radius:18px;
+  border:1px solid rgba(15,23,42,.08);
+  background:rgba(255,255,255,.92);
+  font-weight:900;
+  color:var(--ink);
+  cursor:pointer;
+  text-align:left;
+}
+#drawer .drawerBtn:active{transform:translateY(1px)}
+#drawer .drawerBtn .i{width:28px;height:28px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(29,78,216,.10);color:#1e3a8a;font-size:16px}
+#drawer .drawerFooter{margin-top:auto;padding-top:12px;border-top:1px solid rgba(15,23,42,.08)}
+
+/* Bottom tabs */
+.tabs{
+  position:fixed;left:0;right:0;bottom:0;z-index:60;
+  background:rgba(255,255,255,.92);
+  border-top:1px solid rgba(15,23,42,.08);
+  padding:10px 10px calc(10px + env(safe-area-inset-bottom, 0px));
+  box-shadow:0 -16px 34px rgba(0,0,0,.10);
+  backdrop-filter: blur(12px);
+}
+.tabs .bar{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-width:980px;margin:0 auto}
+.tabbtn{
+  padding:8px 6px;
+  border-radius:18px;
+  background:transparent;
+  color:#475569;
+  font-weight:900;
+  font-size:11px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  min-height:52px;
+  border:1px solid transparent;
+}
+.tabbtn .tabicon{width:22px;height:22px;display:block}
+.tabbtn.active{
+  background:rgba(29,78,216,.10);
+  border:1px solid rgba(29,78,216,.14);
+  color:#1e3a8a;
+  box-shadow:0 12px 26px rgba(29,78,216,.12);
+}
+.tabbtn.active .tabicon{transform:translateY(-1px)}
+
+/* FAB */
+.primary.fab{
+  position:fixed;
+  right:14px;
+  bottom:calc(96px + env(safe-area-inset-bottom, 0px));
+  width:auto;
+  padding:14px 16px;
+  display:flex;gap:10px;align-items:center;
+  border-radius:20px;
+  z-index:70;
+  box-shadow:var(--shadow2);
+}
+.primary.fab .ico{
+  width:22px;height:22px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.18);
+}
+@media(min-width:980px){.primary.fab{right:calc(50% - 490px + 14px);}}
+
+/* Tables */
+#tablaMantWrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:18px;border:1px solid rgba(15,23,42,.08)}
+#tablaMantWrap table{min-width:760px}
+#tablaMantWrap.table-scroll:after{display:none !important; content:none !important;}
+
+.money-wrap{position:relative;}
+.money-wrap::before{content:'$'; position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#6b7280; font-weight:900; pointer-events:none;}
+.money-wrap .money-input{padding-left:28px;}
+
+#screen-combustible .fuel-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start;}
+#screen-combustible .fuel-2col > div{min-width:0;}
+#screen-combustible .fuel-check{display:flex;align-items:center;gap:10px;padding-top:6px;}
+#screen-combustible .fuel-check input[type=checkbox]{width:22px;height:22px}
+
+/* Hide old buttons moved to drawer (kept for compat) */
+#btnExportXls, #goCombustible{ display:none !important; }
+</style>
+</head>
+
+<body>
+<div id="toast"></div>
+<header>
+  <div class="top">
+    <div class="brand">
+      <div class="appLogo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M7 17a3 3 0 1 0 0 .01" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M17 17a3 3 0 1 0 0 .01" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M10 17h4l2-5h-5l-2-4H6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div style="min-width:0">
+        <h1>Mi Moto al Día</h1>
+        <p class="tagline">Evita olvidos. Rueda seguro.</p>
+      </div>
+    </div>
+
+    <div class="headerActions">
+      <div style="text-align:right">
+        <div class="small" style="color:rgba(255,255,255,.78)">Plan</div>
+        <div id="planTag" class="pill ok"><span class="dot" aria-hidden="true"></span><span id="planText">FREE</span></div>
+      </div>
+      <button class="menuBtn" id="openMenu" aria-label="Abrir menú">☰</button>
+    </div>
+  </div>
+</header>
+
+<div id="drawerBackdrop"></div>
+<aside id="drawer" aria-hidden="true">
+  <div class="drawerHeader">
+    <b>Menú</b>
+    <button class="btn" id="closeMenu" style="width:auto;padding:8px 10px;border-radius:12px">Cerrar</button>
+  </div>
+
+  <button class="drawerBtn" id="menuGoAjustes">
+    <span class="i">⚙️</span><span>Ajustes / Plan</span>
+  </button>
+
+  <button class="drawerBtn" id="menuGoCombustible">
+    <span class="i">⛽</span><span>Combustible</span>
+  </button>
+
+  <button class="drawerBtn" id="menuExportXls">
+    <span class="i">📄</span><span>Exportar Historial a Excel</span>
+  </button>
+
+  <button class="drawerBtn" id="menuAbout">
+    <span class="i">ℹ️</span><span>Acerca de</span>
+  </button>
+
+  <div class="drawerFooter small">
+    Tip: en <b>Ajustes</b> puedes cambiar FREE/PRO, hacer respaldo y ver el “pitch”.
+  </div>
+</aside>
+
+<div class="wrap">
+
+  <!-- INICIO -->
+  <section id="screen-inicio" class="screen">
+    <div class="card" id="inicioCardMain">
+      <div class="inline">
+        <div>
+          <label>Moto activa</label>
+          <select id="activeMoto"></select>
+          <div class="small" style="margin-top:6px">Todo se calcula según la moto seleccionada.</div>
+        </div>
+        <div>
+          <label>Kilometraje actual</label>
+          <input id="kmActual" type="number" inputmode="numeric" placeholder="Ej: 32500"/>
+        </div>
+        <div>
+          <label>Umbral “Próximo” por km</label>
+          <input id="umbralKm" type="number" inputmode="numeric" placeholder="Ej: 300"/>
+          <div class="small" style="margin-top:6px">
+            Se pone <b>Próximo</b> cuando falten esos km (por defecto 300).
+          </div>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <button class="primary" id="btnGuardarKm">Guardar km</button>
+</div>
+
+      <div class="kpis">
+        <div class="kpi"><div class="small">Mantenimiento vencido</div><b id="kV">0</b></div>
+        <div class="kpi"><div class="small">Mantenimiento próximo</div><b id="kP">0</b></div>
+        <div class="kpi"><div class="small">Documentos por vencer</div><b id="kDocs">0</b></div>
+      </div>
+
+      <!-- ✅ Estado rápido en Inicio -->
+      <div class="card" id="estadoRapidoCard" style="display:none;margin-top:10px;box-shadow:none;border:1px solid #eef2f7">
+        <div class="small" style="margin-bottom:8px">
+          <b>Estado (lo más urgente)</b> — lo próximo a vencer para que se vea al abrir el APK.
+        </div>
+
+        <div style="overflow:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th style="text-align:right">Restante</th>
+                <th style="text-align:right">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="estadoRapidoBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+</div>
+
+    <!-- Cuando NO hay motos -->
+    <div class="card" id="noMotoCard" style="display:none">
+      <h3 style="margin:0">Aún no tienes una moto</h3>
+      <div class="small" style="margin-top:6px">
+        En FREE puedes tener <b>1 moto</b>. Agrégala para empezar a ver el estado y registrar mantenimiento.
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="primary" id="goMotosAdd">Agregar mi moto</button>
+        <button class="btn" id="goAjustesPlan">Ver plan</button>
+      </div>
+    </div>
+
+    <div class="card" id="inicioAccionRapida">
+      <h3 style="margin:0">Acción rápida</h3>
+      <div class="small" style="margin-top:6px">
+        Para registrar mantenimiento usa el botón de abajo (vista limpia). Para ver todo entra a <b>Estado</b>.
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="primary" id="goEstado">Ver Estado</button>
+        <button class="btn" id="goRegistro">Registrar mantenimiento</button>
+      </div>
+    </div>
+  
+
+  <!-- Banner (solo FREE) -->
+</section>
+
+  <!-- REGISTRO LIMPIO -->
+  <section id="screen-registro" class="screen" style="display:none">
+    <div class="card">
+      <div class="topbar">
+        <button class="backbtn" id="regBack">← Volver</button>
+        <div class="small">Registro rápido</div>
+        <div></div>
+      </div>
+
+      <h3 style="margin:0">Registrar mantenimiento</h3>
+      <div class="small" style="margin-top:6px">Registra y se guarda en Historial.</div>
+
+      <div id="regCompTop" class="reg-grid reg-comp-top" style="margin-top:10px">
+        <div id="regCompCell">
+          <label>Componente</label>
+          <select id="comp_reg"></select>
+        </div>
+        <div id="regFechaInlineSlot" style="display:none"></div>
+      </div>
+
+      <div id="compOtroWrap" style="display:none;margin-top:10px">
+          <label>Nombre del componente (personalizado)</label>
+          <input id="comp_otro_reg" placeholder="Ej: Aceite de motor / Aceite suspensión / Rodamientos"/>
+        <div id="otroRowKmAviso" class="reg-grid" style="margin-top:10px">
+          <div id="otroKmUltSlot"></div>
+          <div id="otroAvisoSlot">
+            <div id="otroAvisoWrap">
+              <label>¿Cada cuántos KM quieres que te avise?</label>
+            <input id="comp_otro_km" type="number" inputmode="numeric" placeholder="Ej: 1500"/>
+            <div class="small" style="margin-top:6px">
+              Tip: te sugerimos un valor según tu moto (puedes cambiarlo).
+            </div>
+            </div>
+          </div>
+        </div>
+          <div class="small" style="margin-top:10px">
+            Se guardará como componente y aparecerá también en <b>Estado</b>.
+          </div>
+        </div>
+
+      <div id="regGrid" class="reg-grid" style="margin-top:10px">
+        <div id="regFechaCell">
+          <label>Fecha</label>
+          <input id="fecha_reg" type="date"/>
+        </div>
+
+        <div id="regKmCell">
+          <label>Kilometraje cuando se hizo</label>
+          <input id="kmUlt_reg" type="number" inputmode="numeric" placeholder="Ej: 32000"/>
+        </div>
+
+        <div id="compIntervalWrap" style="display:none">
+          <label>Intervalo (km)</label>
+          <input id="comp_intervalo_km" type="number" inputmode="numeric" placeholder="Ej: 1500"/>
+          <div class="small" id="compIntervalHelp" style="margin-top:6px"></div>
+        </div>
+
+        <div id="regCostoCell">
+          <label>Costo (opcional)</label>
+          <div class="money-wrap"><input id="costo_reg" class="money-input" type="number" inputmode="numeric" placeholder="Ej: 45000"/></div>
+          <div class="small" style="margin-top:6px">Sirve para ver cuánto has gastado en Historial.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:10px">
+        <label>Observación (opcional)</label>
+        <input id="obs_reg" placeholder="Ej: Aceite 10W40 / cambio banda"/>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <button class="primary" id="btnRegistrar_reg">Registrar</button>
+        <button class="ghost" id="btnLimpiarReg_reg">Limpiar</button>
+      </div>
+
+      <div class="hr"></div>
+      <div class="small">
+        En FREE el cilindraje es por rangos (ej: <b>150–200 cc</b>). En PRO puedes usar cilindraje exacto (ej: <b>180 cc</b>).
+      </div>
+    </div>
+  </section>
+
+  <!-- ESTADO -->
+  <section id="screen-estado" class="screen" style="display:none">
+    <div class="card">
+      <div class="inline">
+        <div>
+          <h3 style="margin:0">Estado</h3>
+          <div class="small" id="estadoResumen"></div>
+        </div>
+        <div>
+          <label>Filtro mantenimiento</label>
+          <select id="filtroMant">
+            <option value="todos">Todos</option>
+            <option value="vencido">Vencido</option>
+            <option value="proximo">Próximo</option>
+            <option value="ok">OK</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="small">
+        <span class="badge">Mantenimiento</span>
+        OK / Próximo / Vencido por km y (si está en PRO) por tiempo.
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <button class="primary" id="goRegistroDesdeEstado">Registrar mantenimiento</button>
+      </div>
+
+      <div id="tablaMantWrap" class="table-scroll" style="overflow:auto;margin-top:10px">
+        <table>
+          <thead>
+          <tr>
+            <th>Estado</th>
+            <th>Componente</th>
+            <th>Último (fecha / km)</th>
+            <th>Intervalo</th>
+            <th>Próximo</th>
+            <th>Restantes</th>
+          </tr>
+          </thead>
+          <tbody id="tablaMant"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="inline">
+        <div>
+          <h3 style="margin:0">Documentos</h3>
+          <div class="small">SOAT, Tecnomecánica y otros vencimientos por fecha.</div>
+        </div>
+        <div>
+          <label>Alerta “Próximo”</label>
+          <select id="docUmbral">
+            <option value="30">1 mes (30 días)</option>
+            <option value="15">15 días</option>
+            <option value="7">7 días</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="small">
+        <span class="badge">Fecha</span>
+        Se pone <b>Próximo</b> cuando falten los días que elijas. <b>Vencido</b> si ya pasó la fecha.
+      </div>
+
+      <div style="overflow:auto;margin-top:10px">
+        <table>
+          <thead>
+          <tr>
+            <th>Documento</th>
+            <th>Vence</th>
+            <th>Días restantes</th>
+            <th>Estado</th>
+          </tr>
+          </thead>
+          <tbody id="tablaDocs"></tbody>
+        </table>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="row">
+        <div>
+          <label>Actualizar documento</label>
+          <select id="docSel"></select>
+        </div>
+        <div>
+          <label>Fecha de vencimiento</label>
+          <input id="docFecha" type="date"/>
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="primary" id="btnGuardarDoc">Guardar documento</button>
+        <button class="ghost" id="btnLimpiarDoc">Limpiar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOTOS -->
+  <section id="screen-motos" class="screen" style="display:none">
+    <div class="card" id="motosListCard">
+      <div class="inline">
+        <div>
+          <h3 style="margin:0">Tus motos</h3>
+          <div class="small">En FREE puedes tener <b>1 moto</b>. En PRO: varias motos + cilindraje exacto.</div>
+        </div>
+        <div class="right">
+          <button class="primary" id="btnNuevaMoto">+ Agregar moto</button>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div id="motosList"></div>
+    </div>
+
+    <div class="card" id="motoFormCard" style="display:none">
+      <h3 id="motoFormTitle" style="margin:0 0 10px">Nueva moto</h3>
+
+      <div class="row">
+        <div>
+          <label>Nombre (ej: “CR5”, “NKD”, “La roja”)</label>
+          <input id="mNombre" placeholder="Mi moto"/>
+        </div>
+        <div>
+          <label>Uso</label>
+          <select id="mUso">
+            <option value="diario">Diario (ciudad)</option>
+            <option value="ocasional">Ocasional</option>
+            <option value="trabajo">Trabajo (reparto)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <!-- Datos opcionales (para completar ficha técnica) -->
+      <div class="row" style="margin-top:6px">
+        <div>
+          <label>Marca (opcional)</label>
+          <input id="mMarca" placeholder="Ej: AKT, Bajaj, Yamaha" />
+        </div>
+        <div>
+          <label>Modelo / línea (opcional)</label>
+          <input id="mModelo" placeholder="Ej: NKD 125, NS200" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:6px">
+        <div>
+          <label>Año (opcional)</label>
+          <input id="mAnio" placeholder="Ej: 2022" inputmode="numeric" />
+        </div>
+        <div>
+          <label>Combustible (opcional)</label>
+          <select id="mCombustible">
+            <option value="">Sin especificar</option>
+            <option value="corriente">Gasolina corriente</option>
+            <option value="extra">Gasolina extra</option>
+            <option value="diesel">Diésel</option>
+            <option value="electrica">Eléctrica</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- FREE -->
+      <div id="motoTipoFreeBox">
+        <label>Cilindraje (rango recomendado)</label>
+        <select id="mTipoFree">
+          <option value="110">110–125 cc</option>
+          <option value="150">150–200 cc</option>
+          <option value="250">250–300 cc</option>
+        </select>
+        <div class="small" style="margin-top:6px">
+          En FREE trabajamos por rangos (tu <b>180</b> entra en <b>150–200</b>).
+        </div>
+      </div>
+
+      <!-- PRO -->
+      <div id="motoTipoProBox" style="display:none;margin-top:10px">
+        <div class="row">
+          <div>
+            <label>Cilindraje exacto (PRO)</label>
+            <select id="mTipoPro">
+              <option value="110">110 cc</option>
+              <option value="125">125 cc</option>
+              <option value="150">150 cc</option>
+              <option value="160">160 cc</option>
+              <option value="180" selected>180 cc</option>
+              <option value="200">200 cc</option>
+              <option value="250">250 cc</option>
+              <option value="300">300 cc</option>
+              <option value="custom">Personalizado…</option>
+            </select>
+          </div>
+          <div>
+            <label>Personalizado (cc)</label>
+            <input id="mTipoCustom" type="number" inputmode="numeric" placeholder="Ej: 184" disabled/>
+          </div>
+        </div>
+        <div class="small" style="margin-top:6px">
+          En PRO la app usa el cilindraje exacto para afinar intervalos.
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="row">
+        <div>
+          <label>Kilometraje actual</label>
+          <input id="mKm" type="number" inputmode="numeric" placeholder="Ej: 32500"/>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <div class="small">Tip: luego puedes cambiar el km en Inicio.</div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="row">
+        <div>
+          <label>Capacidad del tanque (opcional)</label>
+          <input id="mTankCap" type="number" inputmode="decimal" step="0.01" placeholder="Ej: 11.5"/>
+        </div>
+        <div>
+          <label>Unidad</label>
+          <select id="mTankUnit">
+            <option value="L">Litros (L)</option>
+            <option value="gal">Galones (gal)</option>
+          </select>
+          <div class="small" style="margin-top:6px">Se usa para sugerir la cantidad cuando marcas <b>Tanque lleno</b> en Combustible.</div>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <button class="primary" id="btnGuardarMoto">Guardar moto</button>
+        <button class="btn" id="btnCancelarMoto">Cancelar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- HISTORIAL -->
+  <section id="screen-historial" class="screen" style="display:none">
+    <div class="card">
+      <div class="inline">
+        <div>
+          <h3 style="margin:0">Historial (bitácora)</h3>
+          <div class="small">Cada registro queda guardado aquí.</div>
+        </div>
+        <div class="row" style="max-width:420px">
+          <button class="btn" id="btnExportXls">Exportar a Excel (.xls)</button>
+</div>
+      </div>
+
+      
+<div class="kpis" style="margin-top:10px">
+  <div class="kpi"><div class="small">Gasto total</div><b id="gTotal">$0</b></div>
+  <div class="kpi"><div class="small">Gasto últimos 30 días</div><b id="g30">$0</b></div>
+  <div class="kpi"><div class="small">Registros con costo</div><b id="gN">0</b></div>
+</div>
+      <div class="hr"></div>
+      <div style="overflow:auto">
+        <table>
+          <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Moto</th>
+            <th>Tipo</th>
+            <th>Detalle</th>
+            <th>Km</th>
+            <th>Registrado</th>
+          </tr>
+          </thead>
+          <tbody id="histTabla"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- AJUSTES -->
+  <section id="screen-ajustes" class="screen" style="display:none">
+    <div class="card">
+      <h3 style="margin:0">Plan y opciones</h3>
+      <div class="small" style="margin-top:6px">
+        Aquí simulamos FREE/PRO. En Play Store se activa con pago (Google Play Billing).
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="row">
+        <div>
+          <label>Estado PRO (simulación)</label>
+          <select id="proToggle">
+            <option value="0">FREE</option>
+            <option value="1">PRO</option>
+          </select>
+          <div class="small" style="margin-top:6px">PRO habilita tiempo+km y cilindraje exacto.</div>
+        </div>
+        <div>
+          <label>Respaldo (JSON)</label>
+          <button class="btn" id="btnExportJson">Exportar JSON</button>
+          <div class="small" style="margin-top:6px">Para restaurar en otro celular.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:10px">
+        <label>Importar respaldo (JSON)</label>
+        <input id="importFile" type="file" accept="application/json"/>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="row">
+        <button class="danger" id="btnReset">Borrar todo</button>
+        <button class="btn" id="btnAbout">Ver “pitch” Play Store</button>
+      </div>
+
+      <div id="aboutBox" style="display:none;margin-top:10px" class="hint small">
+        <b>Título:</b> Mi Moto al Día<br/>
+        <b>Subtítulo:</b> Mantenimiento y recordatorios para tu moto<br/><br/>
+        <b>Descripción corta:</b> “Te avisamos cuándo hacer mantenimiento antes de que tu moto falle.”<br/><br/>
+        <b>Gratis:</b> 1 moto, mantenimiento por km, documentos por fecha, historial, exportar Excel.<br/>
+        <b>Pro:</b> varias motos, cilindraje exacto, tiempo+km completo, notificaciones, costos, backup nube.
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ACERCA DE -->
+  <section id="screen-acerca" class="screen" style="display:none">
+    <div class="card soft">
+      <div class="topbar">
+        <button class="backbtn" id="aboutBack">← Volver</button>
+        <div class="small">Información</div>
+        <div></div>
+      </div>
+
+      <h3 style="margin:0">Mi Moto al Día</h3>
+      <div class="small" style="margin-top:6px">Evita olvidos. Rueda seguro.</div>
+
+      <div class="hr"></div>
+
+      <div class="hint">
+        <b>¿Qué hace esta app?</b>
+        <div class="small" style="margin-top:6px">
+          Te ayuda a llevar el control de <b>mantenimientos</b>, <b>documentos</b> (SOAT/tecnomecánica, etc.),
+          <b>combustible</b> y una <b>bitácora</b> de lo que haces a tu moto para que no se te pase nada.
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="row">
+        <div class="mutebox">
+          <b>Privacidad</b>
+          <div class="small" style="margin-top:6px">
+            Los datos se guardan en tu dispositivo (local). Puedes exportar un respaldo en <b>JSON</b> desde Ajustes.
+          </div>
+        </div>
+        <div class="mutebox">
+          <b>Soporte</b>
+          <div class="small" style="margin-top:6px">
+            ¿Sugerencias o bugs? Escríbenos.
+          </div>
+          <button class="btn" id="btnCopySupport" style="margin-top:10px">Copiar correo de soporte</button>
+          <div class="small" id="supportEmail" style="margin-top:6px">soporte@mimotoaldia.app</div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="small">
+        <b>Roadmap (próximamente)</b>
+        <ul class="small" style="margin:8px 0 0; padding-left:18px">
+          <li>Notificaciones push / recordatorios</li>
+          <li>Respaldo en la nube</li>
+          <li>Reportes de gastos y rendimiento</li>
+          <li>Widget de estado rápido</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+<!-- COMBUSTIBLE -->
+<section id="screen-combustible" class="screen" style="display:none">
+  <div class="card">
+    <div class="inline">
+      <div>
+        <h3 style="margin:0">Combustible</h3>
+        <div class="small">Registra cada tanqueada para ver rendimiento (km/L o km/gal) y costo por km.</div>
+      </div>
+</div>
+
+    <div class="hr"></div>
+
+    <!-- Fila 1: Fecha + Kilometraje -->
+    <div class="row fuel-2col">
+      <div>
+        <label>Fecha</label>
+        <input id="fuelFecha" type="date"/>
+      </div>
+      <div>
+        <label>Kilometraje (odómetro)</label>
+        <input id="fuelKm" type="number" inputmode="numeric" placeholder="Ej: 32500"/>
+      </div>
+    </div>
+
+    <!-- Fila 2: Valor pagado + Tanque lleno -->
+    <div class="row fuel-2col" style="margin-top:10px">
+      <div>
+        <label>Valor pagado (COP)</label>
+        <div class="money-wrap"><input id="fuelValor" class="money-input" type="number" inputmode="numeric" placeholder="Ej: 50000"/></div>
+      </div>
+      <div>
+        <label>Tanque lleno</label>
+        <div class="fuel-check">
+          <input id="fuelLleno" type="checkbox" />
+          <div class="small">Marcar si quedó lleno</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fila 3: Cantidad (como estaba) -->
+    <div style="margin-top:10px">
+      <label>Cantidad</label>
+      <div class="row" style="grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <input id="fuelCant" type="number" inputmode="decimal" step="0.01" placeholder="Ej: 8.5"/>
+        </div>
+        <div>
+          <select id="fuelUnidad">
+            <option value="L">Litros (L)</option>
+            <option value="gal">Galones (gal)</option>
+          </select>
+        </div>
+      </div>
+      <div class="small" style="margin-top:6px">Si no pones cantidad, no se calcula rendimiento.</div>
+    </div>
+
+    <div class="row" style="margin-top:10px">
+      <button class="primary" id="btnFuelGuardar">Guardar tanqueada</button>
+    </div>
+
+    <div class="kpis" style="margin-top:10px">
+      <div class="kpi"><div class="small">Recorrido desde última</div><b id="fuelDeltaKm">—</b></div>
+      <div class="kpi"><div class="small">Rendimiento</div><b id="fuelRend">—</b></div>
+      <div class="kpi"><div class="small">Costo por km</div><b id="fuelCostoKm">—</b></div>
+    </div>
+
+    <div class="small" id="fuelLastMsg" style="margin-top:8px">—</div>
+    <div class="small" style="margin-top:6px">Nota: el rendimiento es más confiable cuando marcas <b>Tanque lleno</b>.</div>
+
+    <div class="hr"></div>
+
+    <div class="small" id="fuelLimitNote" style="margin:0 0 8px">Mostrando solo las <b>últimas 3</b> tanqueadas recientes. Para ver el historial completo, entra a <b>Historial</b>.</div>
+
+    <div style="overflow:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Km</th>
+            <th>Valor</th>
+            <th>Cant.</th>
+            <th>Desde última</th>
+            <th>Rend.</th>
+          </tr>
+        </thead>
+        <tbody id="fuelTabla"></tbody>
+      </table>
+    </div>
+
+    <div class="row" style="margin-top:10px">
+      <button class="danger" id="btnFuelBorrarTodo">Borrar registros de combustible</button>
+    </div>
+  </div>
+</section>
+
+<button class="primary fab" id="fabAdd" aria-label="Registrar mantenimiento rápido">
+  <span class="ico">+</span>
+  Registrar
+</button>
+
+<!-- Tabs -->
+
+  <div id="freeBanner" class="ad-banner">Banner versión Free</div>
+  <div class="tabs">
+  <div class="bar">
+    <button class="tabbtn active" data-go="inicio"><svg class="tabicon" viewBox="0 0 24 24" fill="none"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span class="tablabel">Inicio</span></button>
+    <button class="tabbtn" data-go="estado"><svg class="tabicon" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="tablabel">Estado</span></button>
+    <button class="tabbtn" data-go="combustible"><svg class="tabicon" viewBox="0 0 24 24" fill="none"><path d="M7 4h8v16H7z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M10 8h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 6h2l2 2v10a2 2 0 0 1-2 2h-1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="tablabel">Combustible</span></button>
+    <button class="tabbtn" data-go="motos"><svg class="tabicon" viewBox="0 0 24 24" fill="none"><path d="M7 17a3 3 0 1 0 0 .01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M17 17a3 3 0 1 0 0 .01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10 17h4l2-5h-5l-2-4H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="tablabel">Motos</span></button>
+    <button class="tabbtn" data-go="historial"><svg class="tabicon" viewBox="0 0 24 24" fill="none"><path d="M7 4h10v16H7z" stroke="currentColor" stroke-width="2"/><path d="M7 8h10" stroke="currentColor" stroke-width="2"/></svg><span class="tablabel">Historial</span></button>
+  </div>
+</div>
+
+<script>
+// Perf: idle callback polyfill
+window.requestIdleCallback = window.requestIdleCallback || function(cb){return setTimeout(function(){cb({didTimeout:false,timeRemaining:function(){return 0;}});},1);};
+window.cancelIdleCallback = window.cancelIdleCallback || function(id){clearTimeout(id);};
+
+/* =========================
+   Mi Moto al Día — MVP
+   Cambios:
+   ✅ Inicio: Estado rápido (lo próximo a vencer)
+   ✅ FREE: permitir eliminar la única moto (quedar 0 motos)
+   ========================= */
+
+const KEY = "mimotoaldia_mvp_v4_inicio_estado_delete_free";
+const UMBRAL_MESES = 1; // Próximo por tiempo (PRO) cuando falte 1 mes
+
+/* ===== Notificaciones dentro de la app (Toast) ===== */
+function toast(msg, type="ok"){
+  const host = document.getElementById("toast");
+  if(!host){ try{ alert(msg); }catch(e){}; return; }
+  const el = document.createElement("div");
+  el.className = `toast-item ${type}`;
+  el.textContent = msg;
+  host.appendChild(el);
+  requestAnimationFrame(()=> el.classList.add("show"));
+  setTimeout(()=>{ el.classList.remove("show"); }, 2200);
+  setTimeout(()=>{ el.remove(); }, 2600);
+}
+function notifyOk(msg){ toast(msg,"ok"); }
+function notifySoon(msg){ toast(msg,"soon"); }
+function notifyLate(msg){ toast(msg,"late"); }
+
+function tipoRangoLabel(tipoGroup){
+  if(tipoGroup==="110") return "110–125 cc";
+  if(tipoGroup==="150") return "150–200 cc";
+  return "250–300 cc";
+}
+function usoLabel(uso){
+  if(uso==="diario") return "diario";
+  if(uso==="ocasional") return "ocasional";
+  return "trabajo";
+}
+
+function templateFor(tipoGroup, uso, exactCc=null, isPro=false){
+  let aceite = (tipoGroup==="110") ? 1200 : (tipoGroup==="150") ? 1500 : 2500;
+  let filtroAceite = aceite * 2;
+  let filtroAire = (tipoGroup==="110") ? 2500 : 3000;
+  let bujia = (tipoGroup==="110") ? 5000 : (tipoGroup==="150") ? 6000 : 8000;
+  let valvulas = (tipoGroup==="110") ? 5000 : (tipoGroup==="150") ? 6000 : 8000;
+  let cadenaLub = 700;
+  let kit = (tipoGroup==="250") ? 25000 : 20000;
+  let frenosRev = 2500;
+
+  let llantaDel = (tipoGroup==="250") ? 16000 : 14000;
+  let llantaTra = (tipoGroup==="250") ? 14000 : 12000;
+
+  let liqFrenoKm = 12000;
+  let suspKm = 12000;
+  let bateriaKm = 24000;
+
+  // Intervalos FIXOS en FREE (conservadores) para que el cálculo sea estable en cualquier país/modelo.
+  if(!isPro){
+    aceite = 1500;
+    filtroAceite = 3000;
+    filtroAire = 3000;
+    bujia = 6000;
+    valvulas = 6000;
+    cadenaLub = 700;
+    kit = 20000;
+    frenosRev = 2500;
+    llantaDel = 14000;
+    llantaTra = 12000;
+    liqFrenoKm = 12000;
+    suspKm = 12000;
+    bateriaKm = 24000;
+  }
+
+  if(isPro && uso==="trabajo"){
+    aceite = Math.round(aceite*0.85);
+    cadenaLub = 500;
+    frenosRev = 2000;
+    filtroAire = Math.round(filtroAire*0.85);
+    llantaDel = Math.round(llantaDel*0.85);
+    llantaTra = Math.round(llantaTra*0.80);
+  }
+  if(uso==="ocasional"){
+    aceite = Math.round(aceite*1.10);
+    cadenaLub = 900;
+    frenosRev = 3000;
+    llantaDel = Math.round(llantaDel*1.05);
+    llantaTra = Math.round(llantaTra*1.05);
+  }
+
+  if(exactCc){
+    const cc = Number(exactCc);
+    let center = (tipoGroup==="110") ? 120 : (tipoGroup==="150") ? 175 : 275;
+    let span   = (tipoGroup==="110") ? 15  : (tipoGroup==="150") ? 25  : 25;
+    const t = Math.max(-1, Math.min(1, (cc - center) / span)); // -1..1
+    aceite = Math.round(aceite * (1 - (t*0.04)));
+    filtroAceite = Math.round(filtroAceite * (1 - (t*0.03)));
+    llantaTra = Math.round(llantaTra * (1 - (t*0.03)));
+    llantaDel = Math.round(llantaDel * (1 - (t*0.02)));
+  }
+
+  return [
+    { id:"aceite", nombre:"Aceite de motor", intervaloKm:aceite, intervaloMeses:null },
+    { id:"filtroAceite", nombre:"Filtro de aceite", intervaloKm:filtroAceite, intervaloMeses:null },
+    { id:"filtroAire", nombre:"Filtro de aire", intervaloKm:filtroAire, intervaloMeses:null },
+    { id:"bujia", nombre:"Bujía", intervaloKm:bujia, intervaloMeses:null },
+    { id:"valvulas", nombre:"Ajuste de válvulas", intervaloKm:valvulas, intervaloMeses:null },
+    { id:"cadenaLub", nombre:"Lubricar cadena", intervaloKm:cadenaLub, intervaloMeses:null },
+    { id:"kit", nombre:"Kit de arrastre (cambio)", intervaloKm:kit, intervaloMeses:null },
+    
+    { id:"frenosPastillas", nombre:"Frenos (pastillas)", intervaloKm:frenosRev, intervaloMeses:null },
+    { id:"frenosBandas", nombre:"Frenos (bandas)", intervaloKm:frenosRev, intervaloMeses:null },
+    { id:"llantaDel", nombre:"Llantas (delantera)", intervaloKm:llantaDel, intervaloMeses:null },
+    { id:"llantaTra", nombre:"Llantas (trasera)", intervaloKm:llantaTra, intervaloMeses:null },
+
+    { id:"liqFreno", nombre:"Líquido de frenos", intervaloKm:liqFrenoKm, intervaloMeses:12 },
+    { id:"susp", nombre:"Aceite suspensión delantera", intervaloKm:suspKm, intervaloMeses:12 },
+    { id:"bateria", nombre:"Batería", intervaloKm:bateriaKm, intervaloMeses:24 },
+  ];
+}
+
+function defaultDocs(){
+  return [
+    { id:"soat", nombre:"SOAT", vence:"" },
+    { id:"tecno", nombre:"Tecnomecánica", vence:"" },
+    { id:"seguro", nombre:"Seguro (opcional)", vence:"" },
+    { id:"impuesto", nombre:"Impuesto (opcional)", vence:"" },
+  ];
+}
+
+function migrateFrenosSplit(state){
+  try{
+    if(!state || !Array.isArray(state.motos)) return;
+    state.motos.forEach(m=>{
+      if(!m || !m.items) return;
+      if(m.items.frenos && (!m.items.frenosPastillas && !m.items.frenosBandas)){
+        const base = m.items.frenos;
+        const mk = (id, nombre)=>({
+          id,
+          nombre,
+          intervaloKm: nn(base.intervaloKm, 2500),
+          intervaloMeses: nn(base.intervaloMeses, null),
+          fecha: nn(base.fecha, ""),
+          kmUlt: nn(base.kmUlt, null),
+          obs: nn(base.obs, "")
+        });
+        m.items.frenosPastillas = mk("frenosPastillas","Frenos (pastillas)");
+        m.items.frenosBandas    = mk("frenosBandas","Frenos (bandas)");
+        delete m.items.frenos;
+      }
+    });
+  }catch(e){}
+}
+
+function loadState(){
+  const raw = localStorage.getItem(KEY);
+  if(raw){
+    const s = JSON.parse(raw);
+    migrateFrenosSplit(s);
+    // Guardar para que quede migrado y consistente
+    try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){}
+    return s;
+  }
+
+  // Nota: ahora sí permitimos que el usuario pueda llegar a 0 motos (si borra).
+  return {
+    pro: false,
+    umbralKm: 300,
+    docUmbralDias: 30,
+    motos: [],
+    activeMotoId: null,
+    log: [],
+    fuelLog: []
+  };
+}
+function saveState(s){ localStorage.setItem(KEY, JSON.stringify(s)); }
+function uid(){ return Math.random().toString(16).slice(2) + Date.now().toString(16); }
+
+// ===== Edición de motos (sin romper lo existente) =====
+let editingMotoId = null; // si está en null, es "Nueva moto"
+function openMotoForm(mode, moto){
+  // mode: 'new' | 'edit'
+  const form = document.getElementById('motoFormCard');
+  const listCard = document.getElementById('motosListCard');
+  const title = document.getElementById('motoFormTitle');
+  if(!form) return;
+  form.style.display = '';
+  if(listCard) listCard.style.display = 'none';
+
+  if(mode==='edit' && moto){
+    editingMotoId = moto.id;
+    if(title) title.textContent = 'Editar moto';
+
+    document.getElementById('mNombre').value = moto.nombre || '';
+    document.getElementById('mUso').value = moto.uso || 'diario';
+
+    const mm = document.getElementById('mMarca');
+    const mdl = document.getElementById('mModelo');
+    const an = document.getElementById('mAnio');
+    const cf = document.getElementById('mCombustible');
+    if(mm) mm.value = moto.marca || '';
+    if(mdl) mdl.value = moto.modelo || '';
+    if(an) an.value = moto.anio ? String(moto.anio) : '';
+    if(cf) cf.value = moto.combustible || '';
+
+    // Cilindraje según plan
+    try{
+      const st = loadState();
+      if(!st.pro){
+        document.getElementById('mTipoFree').value = moto.tipoGroup || '150';
+      }else{
+        const sel = document.getElementById('mTipoPro');
+        const custom = document.getElementById('mTipoCustom');
+        if(moto.exactCc && Number.isFinite(Number(moto.exactCc))){
+          const cc = String(Math.round(Number(moto.exactCc)));
+          const hasOpt = Array.from(sel.options).some(o=>o.value===cc);
+          if(hasOpt){
+            sel.value = cc;
+            custom.value = '';
+            custom.disabled = true
+          }else{
+            sel.value = 'custom';
+            custom.disabled = false;
+            custom.value = cc;
+          }
+        }else{
+          // si no hay exactCc, intentamos mapear por grupo
+          const map = { '110':'125', '150':'180', '250':'250' };
+          const grp = (moto.tipoGroup || '150');
+          const guess = (map[grp] || '180');
+          sel.value = guess;
+          custom.value = '';
+          custom.disabled = true;
+        }
+      }
+    }catch(e){}
+
+    document.getElementById('mKm').value = (moto.kmActual!=null ? String(moto.kmActual) : '');
+
+    const tc = document.getElementById('mTankCap');
+    const tu = document.getElementById('mTankUnit');
+    if(tc) tc.value = (moto.tankCap!=null ? String(moto.tankCap) : '');
+    if(tu) tu.value = (moto.tankUnit || 'L');
+  }else{
+    editingMotoId = null;
+    if(title) title.textContent = 'Nueva moto';
+  }
+}
+
+
+  // Compat: nullish coalescing replacement for older WebViews
+  function nn(v, fallback){
+    return (v === undefined || v === null) ? fallback : v;
+  }
+
+function km(n){ if(n===null||n===undefined||n==="") return null; const x=Number(n); return Number.isFinite(x)?x:null; }
+function fmt(n){ if(n===null) return "—"; return new Intl.NumberFormat("es-CO").format(n); }
+
+function hoyISO(){
+  const d=new Date();
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,"0");
+  const dd=String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${dd}`;
+}
+function ahoraISO(){
+  const d=new Date();
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,"0");
+  const dd=String(d.getDate()).padStart(2,"0");
+  const h=String(d.getHours()).padStart(2,"0");
+  const mi=String(d.getMinutes()).padStart(2,"0");
+  return `${y}-${m}-${dd} ${h}:${mi}`;
+}
+function mesesEntre(fechaISO, hoy=new Date()){
+  if(!fechaISO) return null;
+  const d=new Date(fechaISO+"T00:00:00");
+  let m=(hoy.getFullYear()-d.getFullYear())*12+(hoy.getMonth()-d.getMonth());
+  if(hoy.getDate()<d.getDate()) m-=1;
+  return m;
+}
+function daysUntil(dateISO){
+  if(!dateISO) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const d = new Date(dateISO+"T00:00:00");
+  return Math.round((d - today) / (1000*60*60*24));
+}
+
+function estadoDe(restKm, umbKm, restMes, umbMes){
+  if(restKm===null && restMes===null) return {key:"ok", label:"Sin datos", cls:"ok"};
+  const vencKm = (restKm!==null && restKm<0);
+  const proxKm = (restKm!==null && restKm<=umbKm);
+  const vencMes = (restMes!==null && restMes<0);
+  const proxMes = (restMes!==null && restMes<=umbMes);
+  if(vencKm||vencMes) return {key:"vencido", label:"Vencido", cls:"late"};
+  if(proxKm||proxMes) return {key:"proximo", label:"Próximo", cls:"soon"};
+  return {key:"ok", label:"OK", cls:"ok"};
+}
+function estadoDoc(dias, umbral){
+  if(dias===null) return {key:"ok", label:"Sin fecha", cls:"ok"};
+  if(dias<0) return {key:"vencido", label:"Vencido", cls:"late"};
+  if(dias<=umbral) return {key:"proximo", label:"Próximo", cls:"soon"};
+  return {key:"ok", label:"OK", cls:"ok"};
+}
+function escapeHtml(str){
+  return String(str == null ? "" : str)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+function makeMotoFromTemplate({nombre,tipoGroup,uso,kmActual, exactCc=null, isPro=false}){
+  const items = {};
+  for(const it of templateFor(tipoGroup, uso, exactCc, isPro)){
+    items[it.id] = { ...it, fecha:"", kmUlt:null, obs:"" };
+  }
+  const docs = {};
+  for(const d of defaultDocs()){
+    docs[d.id] = { ...d };
+  }
+  return {
+    id: uid(),
+    nombre,
+    tipoGroup,
+    exactCc,
+    uso,
+    kmActual: nn(km(kmActual), 0),
+    items,
+    docs
+  };
+}
+
+/* Navegación */
+
+function getCurrentKmValue(){
+  const el = document.getElementById('kmActual');
+  if(el){
+    const v = km(el.value);
+    if(v !== null && !Number.isNaN(v)) return v;
+  }
+  const st = loadState();
+  const m = st.motos.find(x=>x.id===st.activeMotoId) || st.motos[0];
+  return m ? (m.kmActual ?? null) : null;
+}
+
+function prefillKmInputs(){
+  const current = getCurrentKmValue();
+  if(current === null || Number.isNaN(current)) return;
+  const ids = ['kmUlt_reg','fuelKm','mKm'];
+  ids.forEach(id=>{
+    const inp = document.getElementById(id);
+    if(!inp) return;
+    // Solo prellenar si está vacío (no sobreescribe lo que el usuario ya escribió)
+    if(String(inp.value||'').trim()==='') inp.value = String(current);
+  });
+}
+
+function showScreen(name){
+  const ids = ["inicio","registro","estado","motos","historial","combustible","ajustes"];
+  for(const s of ids){
+    const el = document.getElementById("screen-"+s);
+    if(el) el.style.display = (s===name) ? "" : "none";
+  }
+  document.querySelectorAll(".tabbtn").forEach(b=>{
+    b.classList.toggle("active", b.dataset.go===name);
+  });
+  render();
+  // Autocompletar KM actual en los formularios (sin sobreescribir lo que el usuario ya escribió)
+  prefillKmInputs();
+}
+
+/* ======================
+   ✅ NUEVO: Estado rápido Inicio
+   - Lista 3 cosas más urgentes (vencidas primero)
+   - Mezcla mantenimientos (km) + documentos (días)
+   ====================== */
+function buildEstadoRapido(state, moto){
+  const card = document.getElementById("estadoRapidoCard");
+  const tbody = document.getElementById("estadoRapidoBody");
+  if(!card || !tbody) return;
+
+  if(!moto){
+    card.style.display = "none";
+    tbody.innerHTML = "";
+    return;
+  }
+
+  const umbralKm = Number(nn(state.umbralKm, 300));
+  const umbralDias = Number(nn(state.docUmbralDias, 30));
+
+  const urg = [];
+
+  // Mantenimientos (por km) desde moto.items
+  const items = Object.values(moto.items || {});
+  for(const it of items){
+    const kmUlt = km(it.kmUlt);
+    if(kmUlt===null || it.intervaloKm==null) continue;
+
+    const proxKm = kmUlt + it.intervaloKm;
+    const restKm = (moto.kmActual!=null) ? (proxKm - moto.kmActual) : null;
+    if(restKm===null) continue;
+
+    const est = (restKm < 0) ? "Vencido" : (restKm <= umbralKm ? "Próximo" : "OK");
+    const badge = (est==="Vencido") ? "late" : (est==="Próximo" ? "soon" : "ok");
+
+    urg.push({
+      tipo:"Mantenimiento",
+      nombre: it.nombre,
+      est,
+      badge,
+      sort: (est==="Vencido"?0:(est==="Próximo"?1:2))*1e9 + Math.max(restKm,0),
+      right: `${fmt(restKm)} km`
+    });
+  }
+
+  // Documentos (por fecha) desde moto.docs
+  const docs = Object.values(moto.docs || {});
+  for(const d of docs){
+    const dias = daysUntil(d.vence);
+    if(dias===null) continue;
+
+    const est = (dias < 0) ? "Vencido" : (dias <= umbralDias ? "Próximo" : "OK");
+    const badge = (est==="Vencido") ? "late" : (est==="Próximo" ? "soon" : "ok");
+
+    urg.push({
+      tipo:"Documento",
+      nombre: d.nombre,
+      est,
+      badge,
+      sort: (est==="Vencido"?0:(est==="Próximo"?1:2))*1e9 + Math.max(dias,0),
+      right: `${dias} días`
+    });
+  }
+
+  urg.sort((a,b)=>a.sort-b.sort);
+
+  const top = urg.slice(0,3);
+  if(top.length===0){
+    card.style.display = "none";
+    tbody.innerHTML = "";
+    return;
+  }
+
+  tbody.innerHTML = top.map(u=>`
+    <tr>
+      <td>
+        <b>${escapeHtml(u.nombre)}</b>
+        <div class="small">${u.tipo}</div>
+      </td>
+      <td style="text-align:right"><b>${escapeHtml(u.right)}</b></td>
+      <td style="text-align:right"><span class="pill ${u.badge}">${u.est}</span></td>
+    </tr>
+  `).join("");
+
+  card.style.display = "";
+}
+
+/* ===== Combustible (tanqueadas) ===== */
+function moneyCOP(v){
+  if(v===null || v===undefined || v==="") return "—";
+  const n = Number(v);
+  if(!Number.isFinite(n) || n<=0) return "—";
+  return "$" + new Intl.NumberFormat("es-CO").format(Math.round(n));
+}
+function fmtDec(n, d=2){
+  const x = Number(n);
+  if(!Number.isFinite(x)) return "—";
+  return x.toFixed(d);
+}
+function renderCombustible(state){
+  const tabla = document.getElementById("fuelTabla");
+  const dKmEl = document.getElementById("fuelDeltaKm");
+  const rendEl = document.getElementById("fuelRend");
+  const cKmEl = document.getElementById("fuelCostoKm");
+  const lastMsgEl = document.getElementById("fuelLastMsg");
+  if(!tabla || !dKmEl || !rendEl || !cKmEl) return;
+
+  const listAll = (state.fuelLog||[]).slice().sort((a,b)=>{
+    return (Number(b.km||0)-Number(a.km||0)) || String(b.fecha||"").localeCompare(String(a.fecha||""));
+  });
+  const listShow = listAll.slice(0,3);
+
+  // KPIs based on last 2 entries
+  if(listAll.length >= 2){
+    const a = listAll[0], b = listAll[1];
+    const deltaKm = Number(a.km) - Number(b.km);
+    dKmEl.textContent = (Number.isFinite(deltaKm) ? (new Intl.NumberFormat("es-CO").format(deltaKm) + " km") : "—");
+
+    // rendimiento: km / cantidad (si existe)
+    const cant = (a.cant==null) ? null : Number(a.cant);
+    const unidad = a.unidad || "L";
+    if(Number.isFinite(deltaKm) && deltaKm>0 && Number.isFinite(cant) && cant>0){
+      rendEl.textContent = fmtDec(deltaKm / cant, 2) + " km/" + (unidad==="gal" ? "gal" : "L");
+    } else {
+      rendEl.textContent = "—";
+    }
+
+    const val = Number(a.valor);
+    if(Number.isFinite(val) && val>0 && Number.isFinite(deltaKm) && deltaKm>0){
+      const ckm = val / deltaKm;
+      cKmEl.textContent = moneyCOP(ckm) + "/km";
+    } else {
+      cKmEl.textContent = "—";
+    }
+  } else {
+    dKmEl.textContent = "—";
+    rendEl.textContent = "—";
+    cKmEl.textContent = "—";
+  }
+
+  // Mensaje "último cálculo"
+  if(lastMsgEl){
+    if(listAll.length >= 2){
+      const a = listAll[0], b = listAll[1];
+      const deltaKm = Number(a.km) - Number(b.km);
+      const unidad = a.unidad || "L";
+      const cant = (a.cant==null) ? null : Number(a.cant);
+      const val = Number(a.valor);
+      let parts = [];
+      if(Number.isFinite(deltaKm) && deltaKm>0) parts.push(`Última: ${new Intl.NumberFormat("es-CO").format(deltaKm)} km desde la anterior`);
+      if(Number.isFinite(deltaKm) && deltaKm>0 && Number.isFinite(cant) && cant>0) parts.push(`rend. ${(deltaKm/cant).toFixed(2)} km/${unidad==="gal"?"gal":"L"}`);
+      if(Number.isFinite(deltaKm) && deltaKm>0 && Number.isFinite(val) && val>0) parts.push(`$${new Intl.NumberFormat("es-CO").format(Math.round(val/deltaKm))}/km`);
+      lastMsgEl.innerHTML = parts.length ? parts.join(" • ") : "—";
+    }else if(listAll.length === 1){
+      lastMsgEl.innerHTML = "Última: primera tanqueada guardada (aún no hay comparación).";
+    }else{
+      lastMsgEl.innerHTML = "—";
+    }
+  }
+
+  // tabla
+  tabla.innerHTML = listShow.map((e, idx)=>{
+    const prev = listAll[idx+1];
+    let delta = "—";
+    let rend = "—";
+    if(prev){
+      const dk = Number(e.km) - Number(prev.km);
+      if(Number.isFinite(dk)) delta = new Intl.NumberFormat("es-CO").format(dk) + " km";
+      const cant = (e.cant==null) ? null : Number(e.cant);
+      const unidad = e.unidad || "L";
+      if(Number.isFinite(dk) && dk>0 && Number.isFinite(cant) && cant>0){
+        rend = fmtDec(dk / cant, 2) + " km/" + (unidad==="gal" ? "gal" : "L");
+      }
+    }
+    const cantTxt = (e.cant==null) ? "—" : (fmtDec(e.cant, 2) + " " + (e.unidad==="gal" ? "gal" : "L"));
+    return `
+      <tr>
+        <td>${escapeHtml(e.fecha||"")}</td>
+        <td>${fmt(e.km)}</td>
+        <td>${moneyCOP(e.valor)}</td>
+        <td>${escapeHtml(cantTxt)}</td>
+        <td>${escapeHtml(delta)}</td>
+        <td>${escapeHtml(rend)}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
+/* Render */
+
+function suggestKmForCustomName(moto, name){
+  const n = String(name||"").toLowerCase();
+  if(n.includes("aceite") && n.includes("motor") && (moto && moto.items && moto.items.aceite && moto.items.aceite.intervaloKm)) return moto.items.aceite.intervaloKm;
+  if(n.includes("filtro") && n.includes("aceite") && (moto && moto.items && moto.items.filtroAceite && moto.items.filtroAceite.intervaloKm)) return moto.items.filtroAceite.intervaloKm;
+  if(n.includes("filtro") && n.includes("aire") && (moto && moto.items && moto.items.filtroAire && moto.items.filtroAire.intervaloKm)) return moto.items.filtroAire.intervaloKm;
+  if(n.includes("buj") && (moto && moto.items && moto.items.bujia && moto.items.bujia.intervaloKm)) return moto.items.bujia.intervaloKm;
+  if(n.includes("valv") && (moto && moto.items && moto.items.valvulas && moto.items.valvulas.intervaloKm)) return moto.items.valvulas.intervaloKm;
+  return null;
+}
+
+function render(){
+  const state = loadState();
+
+  // Plan tag
+  const planTag = document.getElementById("planTag");
+  const planText = document.getElementById("planText");
+  if(planText){ planText.textContent = state.pro ? "PRO" : "FREE"; }
+  else { planTag.textContent = state.pro ? "PRO" : "FREE"; }
+  planTag.className = "pill " + (state.pro ? "soon" : "ok");
+
+  // PRO: mensajes de ayuda como toast (para no romper el layout de la grilla)
+  const _elIntervalo = document.getElementById("comp_intervalo_km");
+  const _elCosto = document.getElementById("costo_reg");
+  if(_elIntervalo){
+        _elIntervalo.onfocus = () => {
+          // Evita múltiples listeners al re-render: asignación directa (sobrescribe)
+          if(state.pro){
+            toast("Define el intervalo (km) para que la app te avise cuando toque este mantenimiento.", "ok");
+          }
+        };
+      }
+if(_elCosto){
+        _elCosto.onfocus = () => {
+          // Evita múltiples listeners al re-render: asignación directa (sobrescribe)
+          toast("Tip: el costo sirve para ver cuánto has gastado en Historial.", "ok");
+        };
+      }
+// Banner (solo en FREE)
+  const freeBanner = document.getElementById("freeBanner");
+  if (freeBanner) freeBanner.style.display = state.pro ? "none" : "block";
+
+  // Registro layout (FREE vs PRO)
+  const regGrid = document.getElementById("regGrid");
+  if (regGrid) regGrid.classList.toggle("free", !state.pro);
+
+  // Pro toggle
+  document.getElementById("proToggle").value = state.pro ? "1":"0";
+  document.getElementById("docUmbral").value = String(nn(state.docUmbralDias, 30));
+
+  // Mostrar cajas FREE/PRO en formulario de moto
+  document.getElementById("motoTipoFreeBox").style.display = state.pro ? "none" : "";
+  document.getElementById("motoTipoProBox").style.display  = state.pro ? "" : "none";
+
+  const hasMotos = Array.isArray(state.motos) && state.motos.length>0;
+
+  // Cards inicio (si no hay motos)
+  document.getElementById("inicioCardMain").style.display = hasMotos ? "" : "none";
+  document.getElementById("inicioAccionRapida").style.display = hasMotos ? "" : "none";
+  document.getElementById("noMotoCard").style.display = hasMotos ? "none" : "";
+
+  // Si no hay motos, no seguimos con el render normal
+  if(!hasMotos){
+    // limpiar select moto activa
+    const sel = document.getElementById("activeMoto");
+    sel.innerHTML = "";
+
+    // estado rápido (Inicio)
+
+    // pantalla Motos: vaciar lista y esconder formulario
+    const motosList = document.getElementById("motosList");
+    if(motosList) motosList.innerHTML = '<div class="small" style="padding:10px;">No tienes motos. Usa “+ Agregar moto”.</div>';
+
+    const motoFormCard = document.getElementById("motoFormCard");
+    if(motoFormCard) motoFormCard.style.display = "none";
+
+    // evitar que el usuario quede en una pantalla vacía (opcional)
+    // si estabas en Motos y eliminaste la última, te quedas igual pero ya sin lista.
+    return;
+  }
+
+  // Garantizar activeMotoId válido
+  if(!state.activeMotoId || !state.motos.some(m=>m.id===state.activeMotoId)){
+    state.activeMotoId = state.motos[0].id;
+    saveState(state);
+  }
+
+  const moto = state.motos.find(m=>m.id===state.activeMotoId);
+
+  // Select moto activa
+  const sel = document.getElementById("activeMoto");
+  sel.innerHTML = "";
+  state.motos.forEach(m=>{
+    const opt=document.createElement("option");
+    opt.value=m.id;
+    const cilTxt = (state.pro && m.exactCc) ? `${m.exactCc} cc` : tipoRangoLabel(m.tipoGroup);
+
+    opt.textContent = `${m.nombre} (${cilTxt} • ${usoLabel(m.uso)})`;
+    sel.appendChild(opt);
+  });
+  sel.value = state.activeMotoId;
+
+  // Inputs inicio
+  document.getElementById("kmActual").value = nn(moto.kmActual, "");
+  document.getElementById("umbralKm").value = nn(state.umbralKm, 300);
+
+  // Registro componentes
+  const compReg = document.getElementById("comp_reg");
+  compReg.innerHTML="";
+  Object.values(moto.items).sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"))
+    .forEach(it=>{
+      const opt=document.createElement("option");
+      opt.value=it.id;
+      opt.textContent=it.nombre;
+      compReg.appendChild(opt);
+    });
+
+  
+  // Opción manual al final
+  const optOtro = document.createElement("option");
+  optOtro.value = "__otro__";
+  optOtro.textContent = "Otro…";
+  compReg.appendChild(optOtro);
+
+  // Mostrar/ocultar campo "Otro"
+  const wrapOtro = document.getElementById("compOtroWrap");
+  const inpOtro = document.getElementById("comp_otro_reg");
+  if(wrapOtro && inpOtro){
+    const sync = ()=>{
+      const isOtro = compReg.value === "__otro__";
+
+      // Mostrar/ocultar bloque "Otro"
+      wrapOtro.style.display = isOtro ? "" : "none";
+        // Layout especial SOLO cuando el componente es "Otro"
+        const regCompTop = document.getElementById("regCompTop");
+        const regFechaCell = document.getElementById("regFechaCell");
+        const regKmCell = document.getElementById("regKmCell");
+        const regFechaInlineSlot = document.getElementById("regFechaInlineSlot");
+        const otroKmUltSlot = document.getElementById("otroKmUltSlot");
+
+        const rememberOrig = (node)=>{
+          if(!node || node.dataset.origParent) return;
+          node.dataset.origParent = node.parentElement ? node.parentElement.id : "";
+          node.dataset.origNext = node.nextElementSibling ? node.nextElementSibling.id : "";
+        };
+        const restoreOrig = (node)=>{
+          if(!node || !node.dataset.origParent) return;
+          const parent = document.getElementById(node.dataset.origParent);
+          if(!parent) return;
+          const nextId = node.dataset.origNext;
+          const nextEl = nextId ? document.getElementById(nextId) : null;
+          if(nextEl && nextEl.parentElement === parent) parent.insertBefore(node, nextEl);
+          else parent.appendChild(node);
+        };
+
+        rememberOrig(regFechaCell);
+        rememberOrig(regKmCell);
+
+        if(isOtro){
+          if(regCompTop) regCompTop.classList.add("is-otro");
+          if(regFechaInlineSlot) regFechaInlineSlot.style.display = "";
+          if(regFechaCell && regFechaInlineSlot && regFechaCell.parentElement !== regFechaInlineSlot){
+            regFechaInlineSlot.appendChild(regFechaCell);
+          }
+          if(regKmCell && otroKmUltSlot && regKmCell.parentElement !== otroKmUltSlot){
+            otroKmUltSlot.appendChild(regKmCell);
+          }
+        }else{
+          if(regCompTop) regCompTop.classList.remove("is-otro");
+          if(regFechaInlineSlot) regFechaInlineSlot.style.display = "none";
+          restoreOrig(regFechaCell);
+          restoreOrig(regKmCell);
+        }
+
+      const inpKmOtro = document.getElementById("comp_otro_km");
+      if(!isOtro){
+        inpOtro.value = "";
+        if(inpKmOtro) inpKmOtro.value = "";
+      }
+
+      // Bloque intervalo editable (solo PRO)
+      const wrapInt = document.getElementById("compIntervalWrap");
+      const inpInt = document.getElementById("comp_intervalo_km");
+      const helpInt = document.getElementById("compIntervalHelp");
+
+      if(!wrapInt || !inpInt) return;
+
+      if(!state.pro || isOtro){
+        wrapInt.style.display = "none";
+        inpInt.value = "";
+        if(helpInt) helpInt.textContent = "";
+        return;
+      }
+
+      const it = moto.items[compReg.value];
+      if(!it){
+        wrapInt.style.display = "none";
+        inpInt.value = "";
+        if(helpInt) helpInt.textContent = "";
+        return;
+      }
+
+      wrapInt.style.display = "";
+      inpInt.value = String(it.intervaloKm || "");
+      if(helpInt){
+        helpInt.textContent = "Define el intervalo (km) para que la app te avise cuando toque este mantenimiento.";
+      }
+
+      // Guardar cambios del intervalo (PRO) sin romper nada
+      inpInt.onchange = ()=>{
+        const v = parseInt(inpInt.value, 10);
+        if(isNaN(v) || v <= 0) return;
+        it.intervaloKm = v;
+        saveState();
+        // refresca para que el resto de pantallas use el nuevo valor
+        render();
+      };
+    };
+    // Evita duplicar listeners: usamos onchange (reemplaza)
+    compReg.onchange = sync;
+    sync();
+  }
+  const inpKm = document.getElementById("comp_otro_km");
+  const tipEl = wrapOtro.querySelector(".small");
+  const applySuggestion = ()=>{
+    const sug = suggestKmForCustomName(moto, inpOtro.value);
+    if(sug && tipEl) tipEl.innerHTML = `Tip: sugerencia para tu moto: <b>${fmt(sug)} km</b> (puedes cambiarlo).`;
+    if(sug && inpKm && !inpKm.value) inpKm.value = String(sug);
+  };
+  if(inpKm){
+    inpOtro.addEventListener("input", ()=>{
+      if(compReg.value !== "__otro__") return;
+      if(!inpKm.value) applySuggestion();
+      else{
+        const sug = suggestKmForCustomName(moto, inpOtro.value);
+        if(sug && tipEl) tipEl.innerHTML = `Tip: sugerencia para tu moto: <b>${fmt(sug)} km</b> (puedes cambiarlo).`;
+      }
+    });
+    // al abrir "Otro", aplicar sugerencia si procede
+    if(compReg.value === "__otro__" && !inpKm.value) applySuggestion();
+  }
+
+// Docs select
+  const docSel = document.getElementById("docSel");
+  docSel.innerHTML="";
+  Object.values(moto.docs).forEach(d=>{
+    const opt=document.createElement("option");
+    opt.value=d.id;
+    opt.textContent=d.nombre;
+    docSel.appendChild(opt);
+  });
+
+  // KPIs y Estado tablas
+  const umbKm = nn(km(state.umbralKm), 300);
+  let V=0, P=0, docsSoon=0;
+
+  // Mantenimiento (Estado)
+  const filtroMant = document.getElementById("filtroMant").value;
+  const tbodyMant = document.getElementById("tablaMant");
+  tbodyMant.innerHTML="";
+
+  const itemsArr = Object.values(moto.items).sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"));
+
+  for(const it of itemsArr){
+    const kmUlt = km(it.kmUlt);
+    const proxKm = (kmUlt!==null && it.intervaloKm!=null) ? (kmUlt + it.intervaloKm) : null;
+    const restKm = (moto.kmActual!=null && proxKm!==null) ? (proxKm - moto.kmActual) : null;
+
+    let restMes = null;
+    if(state.pro){
+      const mp = mesesEntre(it.fecha);
+      restMes = (mp!==null && it.intervaloMeses!=null) ? (it.intervaloMeses - mp) : null;
+    }
+
+    const est = estadoDe(restKm, umbKm, restMes, UMBRAL_MESES);
+    if(est.key==="vencido") V++;
+    if(est.key==="proximo") P++;
+
+    if(filtroMant!=="todos" && est.key!==filtroMant) continue;
+
+    const ultimo = `${it.fecha ? it.fecha : "—"}<div class="small">${kmUlt!==null ? fmt(kmUlt)+" km" : "—"}</div>`;
+    // Intervalo: en FREE, el aviso de tiempo (PRO) debe ir debajo del valor en km
+    let intervaloTxtBase = "";
+    if(state.pro){
+      intervaloTxtBase = [
+        it.intervaloKm!=null ? `${fmt(it.intervaloKm)} km` : null,
+        it.intervaloMeses!=null ? `${it.intervaloMeses} meses` : null
+      ].filter(Boolean).join(" o ");
+    }else{
+      if(it.intervaloKm!=null && it.intervaloMeses!=null){
+        intervaloTxtBase = `${fmt(it.intervaloKm)} km<br><span class="lock small">🔒 por tiempo (PRO)</span>`;
+      }else if(it.intervaloKm!=null){
+        intervaloTxtBase = `${fmt(it.intervaloKm)} km`;
+      }else if(it.intervaloMeses!=null){
+        intervaloTxtBase = `<span class="lock small">🔒 por tiempo (PRO)</span>`;
+      }else{
+        intervaloTxtBase = "—";
+      }
+    }
+    const intervaloTxt = state.pro
+      ? `${intervaloTxtBase} <button class="btn" data-edit-int="${it.id}" style="width:auto;padding:6px 10px;border-radius:10px;font-size:11px;margin-left:6px">Editar</button>`
+      : intervaloTxtBase;
+
+    const proxTxt = [
+      proxKm!=null ? `${fmt(proxKm)} km` : "—",
+      (it.intervaloMeses!=null ? (state.pro ? ` • faltan ${nn(restMes, "—")} mes(es)` : ` • 🔒 por tiempo`) : "")
+    ].join("");
+
+    const restTxt = [
+      restKm!=null ? `${fmt(restKm)} km` : "—",
+      (it.intervaloMeses!=null ? (state.pro ? ` • ${nn(restMes, "—")} mes(es)` : ` • 🔒`) : "")
+    ].join("");
+
+    const compNameHtml = (it.id==="susp")
+      ? "Aceite suspensión<br>delantera"
+      : escapeHtml(it.nombre);
+    const tr=document.createElement("tr");
+    tr.innerHTML = `
+      <td><span class="pill ${est.cls}">${est.label}</span></td>
+      <td><b>${compNameHtml}</b>${it.obs?`<div class="small">${escapeHtml(it.obs)}</div>`:""}</td>
+      <td>${ultimo}</td>
+      <td>${intervaloTxt}</td>
+      <td>${escapeHtml(proxTxt)}</td>
+      <td><b>${escapeHtml(restTxt)}</b></td>
+    `;
+    tbodyMant.appendChild(tr);
+  }
+
+  // Documentos (Estado)
+  const tbodyDocs = document.getElementById("tablaDocs");
+  tbodyDocs.innerHTML="";
+  const umbralDias = Number(nn(state.docUmbralDias, 30));
+
+  Object.values(moto.docs).forEach(d=>{
+    const dias = daysUntil(d.vence);
+    const est = estadoDoc(dias, umbralDias);
+    if(est.key==="proximo" || est.key==="vencido") docsSoon++;
+
+    const tr=document.createElement("tr");
+    tr.innerHTML = `
+      <td><b>${escapeHtml(d.nombre)}</b></td>
+      <td>${d.vence ? escapeHtml(d.vence) : "—"}</td>
+      <td>${dias===null ? "—" : (dias + " días")}</td>
+      <td><span class="pill ${est.cls}">${est.label}</span></td>
+    `;
+    tbodyDocs.appendChild(tr);
+  });
+
+  document.getElementById("estadoResumen").textContent =
+    `${moto.nombre}: Mant. vencidos ${V} • Mant. próximos ${P} • Docs por vencer ${docsSoon}`;
+
+  document.getElementById("kV").textContent = V;
+  document.getElementById("kP").textContent = P;
+  document.getElementById("kDocs").textContent = docsSoon;
+
+  // ✅ Estado rápido en Inicio
+  buildEstadoRapido(state, moto);
+
+  // Motos list
+
+  // UI: cuando se está agregando una moto, ocultar la tarjeta superior "Tus motos"
+  const motosListCard = document.getElementById("motosListCard");
+  const motoFormCardEl = document.getElementById("motoFormCard");
+  if(motosListCard && motoFormCardEl){
+    motosListCard.style.display = (motoFormCardEl.style.display && motoFormCardEl.style.display !== "none") ? "none" : "";
+  }
+
+  const list = document.getElementById("motosList");
+  list.innerHTML="";
+  state.motos.forEach(m=>{
+    const div=document.createElement("div");
+    div.className="card";
+    div.style.boxShadow="none";
+    div.style.border="1px solid #eef2f7";
+
+    const cilTxt = (state.pro && m.exactCc) ? `${m.exactCc} cc` : tipoRangoLabel(m.tipoGroup);
+
+    const fichaParts = [];
+    if(m.marca) fichaParts.push(m.marca);
+    if(m.modelo) fichaParts.push(m.modelo);
+    if(m.anio) fichaParts.push(String(m.anio));
+    const fichaTxt = fichaParts.join(' ');
+    const combTxt = m.combustible ? String(m.combustible) : '';
+
+    div.innerHTML = `
+      <div class="inline">
+        <div>
+          <b>${escapeHtml(m.nombre)}</b>
+          <div class="small">${(fichaTxt? escapeHtml(fichaTxt)+" • " : "")}${cilTxt} • ${usoLabel(m.uso)} • ${fmt(m.kmActual)} km${(m.tankCap&&m.tankUnit)?` • Tanque: ${m.tankCap} ${m.tankUnit==='gal'?'gal':'L'}`:''}${(combTxt?` • ${escapeHtml(combTxt)}`:'')}</div>
+        </div>
+        <div class="row" style="max-width:320px">
+          <button class="btn" data-act="${m.id}">Usar</button>
+          <button class="btn" data-edit="${m.id}">Editar</button>
+          <button class="danger" data-del="${m.id}">Eliminar</button>
+        </div>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+
+  // Historial
+  const hbody = document.getElementById("histTabla");
+  hbody.innerHTML="";
+  // Unificamos la bitácora general con combustible para que en "Historial" también se vean las tanqueadas.
+  // - Si una tanqueada ya fue registrada en state.log (nuevos registros), evitamos duplicarla.
+  const baseLogs = (state.log||[]).slice();
+  const fuelLogs = (state.fuelLog||[]).slice();
+  const fuelIdsEnLog = new Set(baseLogs.filter(e=>e && e.fuelId).map(e=>String(e.fuelId)));
+  const fuelComoLog = fuelLogs
+    .filter(f => f && f.id && !fuelIdsEnLog.has(String(f.id)))
+    .map(f => {
+      const motoObj = state.motos.find(m => m.id===f.motoId) || state.motos.find(m => m.id===state.activeMotoId) || {};
+      const unidadTxt = String(f.unidad||'').trim();
+      const cantVal = (f.cantidad!=null && f.cantidad!=='') ? f.cantidad : (f.cant!=null && f.cant!=='' ? f.cant : '');
+      const cantTxt = (cantVal!=null && cantVal!=='') ? String(cantVal) : '';
+      const lleno = (f.lleno===true) || (f.fullTank===true);
+      const det = [
+        'Tanqueada',
+        (cantTxt && unidadTxt) ? `${cantTxt} ${unidadTxt}` : (cantTxt||unidadTxt||''),
+        lleno ? '(tanque lleno)' : ''
+      ].filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
+      return {
+        id: f.id,
+        fecha: f.fecha || '',
+        moto: motoObj.nombre || '',
+        tipo: 'Combustible',
+        detalle: det,
+        km: (f.km!=null && f.km!=='') ? Number(f.km) : null,
+        costo: (f.valor!=null && f.valor!=='') ? Number(f.valor) : null,
+        creado: f.creado || ''
+      };
+    });
+const logs = baseLogs.concat(fuelComoLog)
+    .sort((a,b)=>(String(b.creado||"")).localeCompare(String(a.creado||"")));
+  if(!logs.length){
+    const tr=document.createElement("tr");
+    tr.innerHTML = `<td colspan="6" class="small">Aún no hay registros. Registra algo desde Inicio o actualiza un documento en Estado.</td>`;
+    hbody.appendChild(tr);
+  } else {
+    logs.forEach(e=>{
+      const tr=document.createElement("tr");
+      tr.innerHTML = `
+        <td>${escapeHtml(e.fecha||"")}</td>
+        <td>${escapeHtml(e.moto||"")}</td>
+        <td>${escapeHtml(e.tipo||"")}</td>
+        <td>${escapeHtml(e.detalle||"")}</td>
+        <td>${e.km!=null ? (fmt(e.km)+" km") : "—"}</td>
+        <td class="mono">${escapeHtml(e.creado||"")}</td>
+      `;
+      hbody.appendChild(tr);
+    });
+  }
+
+// Gastos (Historial)
+const gTotalEl = document.getElementById("gTotal");
+const g30El = document.getElementById("g30");
+const gNEl = document.getElementById("gN");
+if(gTotalEl && g30El && gNEl){
+  const now = new Date();
+  const ms30 = 30*24*60*60*1000;
+  let total = 0, last30 = 0, n = 0;
+
+	logs.forEach(e=>{
+    const c = (e && typeof e==="object") ? e.costo : null;
+    if(c==null) return;
+    const num = Number(c);
+    if(!Number.isFinite(num) || num<=0) return;
+    total += num; n += 1;
+
+    const dt = new Date((e.creado||"").replace(" ","T"));
+    if(!isNaN(dt) && (now - dt) <= ms30) last30 += num;
+  });
+
+  const money = (v)=>"$" + new Intl.NumberFormat("es-CO").format(Math.round(v||0));
+  gTotalEl.textContent = money(total);
+  g30El.textContent = money(last30);
+  gNEl.textContent = String(n);
+}
+
+  // defaults en registro
+  document.getElementById("fecha_reg").value = document.getElementById("fecha_reg").value || hoyISO();
+  if(document.getElementById("fuelFecha")) document.getElementById("fuelFecha").value = document.getElementById("fuelFecha").value || hoyISO();
+  renderCombustible(state);
+}
+
+/* Tabs */
+document.querySelectorAll(".tabbtn").forEach(btn=>{
+  btn.addEventListener("click", ()=> showScreen(btn.dataset.go));
+});
+
+/* Inicio: botones */
+document.getElementById("goEstado").addEventListener("click", ()=> showScreen("estado"));
+document.getElementById("goRegistro").addEventListener("click", ()=> showScreen("registro"));
+// ✅ Estado: botón "Registrar mantenimiento"
+const _goRegEstado = document.getElementById("goRegistroDesdeEstado");
+if(_goRegEstado) _goRegEstado.addEventListener("click", ()=> showScreen("registro"));
+document.getElementById("regBack").addEventListener("click", ()=> showScreen("inicio"));
+
+document.getElementById("goMotosAdd").addEventListener("click", ()=>{
+  showScreen("motos");
+  document.getElementById("btnNuevaMoto").click();
+});
+document.getElementById("goAjustesPlan").addEventListener("click", ()=> showScreen("ajustes"));
+// Tocar el tag del plan (FREE/PRO)
+document.getElementById("planTag").addEventListener("click", ()=> showScreen("ajustes"));
+
+/* Moto activa */
+document.getElementById("activeMoto").addEventListener("change",(e)=>{
+  const state=loadState();
+  state.activeMotoId=e.target.value;
+  saveState(state);
+  render();
+});
+
+/* Guardar KM */
+document.getElementById("btnGuardarKm").addEventListener("click", ()=>{
+  const state=loadState();
+  const moto = state.motos.find(m=>m.id===state.activeMotoId);
+  if(!moto){ alert("No hay moto activa."); return; }
+
+  const kmA = km(document.getElementById("kmActual").value);
+  const umb = km(document.getElementById("umbralKm").value);
+
+  if(kmA===null || kmA<0){ alert("Pon un kilometraje válido."); return; }
+  moto.kmActual = kmA;
+  state.umbralKm = (umb===null || umb<0) ? 300 : umb;
+
+  saveState(state); render();
+  notifyOk("Listo. Kilometraje guardado.");
+});
+
+/* APK */
+/* Filtro mantenimiento */
+document.getElementById("filtroMant").addEventListener("change", render);
+
+/* Estado: editar intervalos (solo PRO) */
+document.getElementById("tablaMant").addEventListener("click", (e)=>{
+  const btn = e.target.closest("[data-edit-int]");
+  if(!btn) return;
+  const id = btn.getAttribute("data-edit-int");
+  const state = loadState();
+  if(!state.pro){ alert("Esta opción es solo PRO."); return; }
+  const moto = state.motos.find(m=>m.id===state.activeMotoId);
+  if(!moto || !moto.items || !moto.items[id]) return;
+
+  const it = moto.items[id];
+
+  const kmActual = it.intervaloKm!=null ? String(it.intervaloKm) : "";
+  const nuevoKmTxt = prompt(`Intervalo en KM para: ${it.nombre}\n\nDeja vacío para no usar KM.`, kmActual);
+  if(nuevoKmTxt===null) return;
+  const nuevoKm = km(nuevoKmTxt);
+  if(nuevoKmTxt.trim()===""){
+    it.intervaloKm = null;
+  } else if(nuevoKm===null || nuevoKm<=0){
+    alert("Intervalo KM inválido.");
+    return;
+  } else {
+    it.intervaloKm = Number(nuevoKm);
+  }
+
+  if(it.intervaloMeses!=null){
+    const mesesActual = String(nn(it.intervaloMeses, ""));
+    const nuevoMesTxt = prompt(`Intervalo por TIEMPO (meses) para: ${it.nombre}\n\nDeja vacío para no usar tiempo.`, mesesActual);
+    if(nuevoMesTxt!==null){
+      if(nuevoMesTxt.trim()===""){
+        it.intervaloMeses = null;
+      } else {
+        const nm = Number(nuevoMesTxt);
+        if(!Number.isFinite(nm) || nm<=0){ alert("Meses inválidos."); return; }
+        it.intervaloMeses = Math.round(nm);
+      }
+    }
+  }
+
+  saveState(state);
+  render();
+  notifyOk("Intervalo actualizado.");
+});
+
+/* Docs umbral */
+document.getElementById("docUmbral").addEventListener("change", (e)=>{
+  const state=loadState();
+  state.docUmbralDias = Number(e.target.value);
+  saveState(state);
+  render();
+});
+
+/* Guardar doc */
+document.getElementById("btnGuardarDoc").addEventListener("click", ()=>{
+  const state=loadState();
+  const moto = state.motos.find(m=>m.id===state.activeMotoId);
+  if(!moto){ alert("No hay moto activa."); return; }
+
+  const docId = document.getElementById("docSel").value;
+  const fecha = document.getElementById("docFecha").value;
+  if(!docId){ alert("Selecciona un documento."); return; }
+  if(!fecha){ alert("Pon la fecha de vencimiento."); return; }
+
+  moto.docs[docId].vence = fecha;
+
+  state.log = state.log || [];
+  state.log.push({
+    fecha,
+    moto: moto.nombre,
+    tipo: "Documento",
+    detalle: moto.docs[docId].nombre + " (vence)",
+    km: null,
+    creado: ahoraISO()
+  });
+
+  saveState(state); render();
+  notifyOk("Documento guardado.");
+  document.getElementById("docFecha").value="";
+});
+document.getElementById("btnLimpiarDoc").addEventListener("click", ()=>{
+  document.getElementById("docFecha").value="";
+});
+
+/* Nueva moto */
+document.getElementById("btnNuevaMoto").addEventListener("click", ()=>{
+  const state=loadState();
+  if(!state.pro && state.motos.length>=1){
+    alert("En FREE solo se permite 1 moto. Elimina la actual si quieres cambiarla.");
+    return;
+  }
+  editingMotoId = null;
+  const t=document.getElementById('motoFormTitle'); if(t) t.textContent='Nueva moto';
+  document.getElementById("motoFormCard").style.display="";
+  // Ocultar tarjeta "Tus motos" mientras se agrega/edita (evita duplicidad visual)
+  const motosListCard = document.getElementById("motosListCard");
+  if(motosListCard) motosListCard.style.display = "none";
+  document.getElementById("mNombre").value="";
+  const _mm = document.getElementById("mMarca");
+  const _mdl = document.getElementById("mModelo");
+  const _an = document.getElementById("mAnio");
+  const _cf = document.getElementById("mCombustible");
+  if(_mm) _mm.value = "";
+  if(_mdl) _mdl.value = "";
+  if(_an) _an.value = "";
+  if(_cf) _cf.value = "";
+  document.getElementById("mUso").value="diario";
+  document.getElementById("mTipoFree").value="150";
+  document.getElementById("mTipoPro").value="180";
+  document.getElementById("mTipoCustom").value="";
+  document.getElementById("mTipoCustom").disabled = true;
+  document.getElementById("mKm").value="";
+  const _tc = document.getElementById("mTankCap");
+  const _tu = document.getElementById("mTankUnit");
+  if(_tc) _tc.value = "";
+  if(_tu) _tu.value = "L";
+});
+
+/* Cancelar moto */
+document.getElementById("btnCancelarMoto").addEventListener("click", ()=>{
+  document.getElementById("motoFormCard").style.display="none";
+  editingMotoId = null;
+  const t=document.getElementById('motoFormTitle'); if(t) t.textContent='Nueva moto';
+  // Volver a mostrar la tarjeta "Tus motos"
+  const motosListCard = document.getElementById("motosListCard");
+  if(motosListCard) motosListCard.style.display = "";
+});
+
+/* PRO custom CC */
+document.getElementById("mTipoPro").addEventListener("change", (e)=>{
+  const isCustom = e.target.value === "custom";
+  const custom = document.getElementById("mTipoCustom");
+  custom.disabled = !isCustom;
+  if(!isCustom) custom.value = "";
+});
+
+/* Guardar moto */
+document.getElementById("btnGuardarMoto").addEventListener("click", ()=>{
+  const state=loadState();
+  if(!state.pro && state.motos.length>=1){
+    alert("En FREE solo se permite 1 moto. Elimina la actual para agregar otra.");
+    return;
+  }
+
+  const nombre = document.getElementById("mNombre").value.trim() || "Mi moto";
+  const uso = document.getElementById("mUso").value;
+  const kmAct = nn(km(document.getElementById("mKm").value), 0);
+  // Datos de identificación (para futuras funciones/IA y cálculos)
+  const marca = (document.getElementById("mMarca")?.value || "").trim();
+  const modelo = (document.getElementById("mModelo")?.value || "").trim();
+  const anioRaw = (document.getElementById("mAnio")?.value || "").trim();
+  const anio = anioRaw ? Number(anioRaw) : null;
+  const combustible = (document.getElementById("mCombustible")?.value || "").trim();
+
+  let tipoGroup = "150";
+  let exactCc = null;
+
+  if(!state.pro){
+    tipoGroup = document.getElementById("mTipoFree").value; // 110/150/250
+  } else {
+    let sel = document.getElementById("mTipoPro").value;
+    if(sel === "custom"){
+      const customVal = km(document.getElementById("mTipoCustom").value);
+      if(customVal===null || customVal<50 || customVal>999){
+        alert("Cilindraje personalizado inválido (ej: 180).");
+        return;
+      }
+      exactCc = Number(customVal);
+    } else {
+      exactCc = Number(sel);
+    }
+
+    if(exactCc <= 125) tipoGroup = "110";
+    else if(exactCc <= 200) tipoGroup = "150";
+    else tipoGroup = "250";
+  }
+
+  // Si estamos editando, actualizamos la moto existente (sin tocar historial ni combustible)
+  if(editingMotoId){
+    const m = state.motos.find(x=>x.id===editingMotoId);
+    if(!m){
+      // si por alguna razón no existe, seguimos como nueva
+      editingMotoId = null;
+    }else{
+      // Actualizar campos editables
+      m.nombre = nombre;
+      m.uso = uso;
+      m.kmActual = kmAct;
+      if(marca) m.marca = marca; else delete m.marca;
+      if(modelo) m.modelo = modelo; else delete m.modelo;
+      if(Number.isFinite(anio) && anio > 1900) m.anio = anio; else delete m.anio;
+      if(combustible) m.combustible = combustible; else delete m.combustible;
+
+      // Cilindraje según plan (NO recalculamos intervalos para no dañar lo ya configurado)
+      m.tipoGroup = tipoGroup;
+      m.exactCc = state.pro ? exactCc : null;
+
+      // Tanque
+      const _tankCapEl = document.getElementById("mTankCap");
+      const _tankUnitEl = document.getElementById("mTankUnit");
+      const _tankCap = _tankCapEl ? Number(_tankCapEl.value) : NaN;
+      if(Number.isFinite(_tankCap) && _tankCap > 0){
+        m.tankCap = _tankCap;
+        m.tankUnit = (_tankUnitEl && _tankUnitEl.value) ? _tankUnitEl.value : "L";
+      }else{
+        delete m.tankCap;
+        delete m.tankUnit;
+      }
+
+      // Si la moto editada era la activa, mantenemos activeMotoId
+      if(state.activeMotoId===editingMotoId){
+        state.activeMotoId = editingMotoId;
+      }
+
+      saveState(state);
+      document.getElementById("motoFormCard").style.display="none";
+      const motosListCard = document.getElementById("motosListCard");
+      if(motosListCard) motosListCard.style.display = "";
+      editingMotoId = null;
+      const t=document.getElementById('motoFormTitle'); if(t) t.textContent='Nueva moto';
+      render();
+      notifyOk("Moto actualizada.");
+      return;
+    }
+  }
+
+  // Nueva moto
+  const moto = makeMotoFromTemplate({nombre,tipoGroup,uso,kmActual:kmAct, exactCc, isPro: state.pro});
+  // Guardar los datos ingresados (no afecta cálculos actuales, pero sirve para futuras mejoras)
+  if(marca) moto.marca = marca;
+  if(modelo) moto.modelo = modelo;
+  if(Number.isFinite(anio) && anio > 1900) moto.anio = anio;
+  if(combustible) moto.combustible = combustible;
+
+  // Capacidad del tanque (opcional)
+  const _tankCapEl = document.getElementById("mTankCap");
+  const _tankUnitEl = document.getElementById("mTankUnit");
+  const _tankCap = _tankCapEl ? Number(_tankCapEl.value) : NaN;
+  if(Number.isFinite(_tankCap) && _tankCap > 0){
+    moto.tankCap = _tankCap;
+    moto.tankUnit = (_tankUnitEl && _tankUnitEl.value) ? _tankUnitEl.value : "L";
+  }
+
+  state.motos.push(moto);
+  state.activeMotoId = moto.id;
+
+  saveState(state);
+  document.getElementById("motoFormCard").style.display="none";
+  // Volver a mostrar la tarjeta "Tus motos"
+  const motosListCard = document.getElementById("motosListCard");
+  if(motosListCard) motosListCard.style.display = "";
+  render();
+  notifyOk("Moto guardada.");
+});
+
+/* Acciones lista motos */
+document.getElementById("motosList").addEventListener("click",(e)=>{
+  const act=e.target.getAttribute("data-act");
+  const edit=e.target.getAttribute("data-edit");
+  const del=e.target.getAttribute("data-del");
+  const state=loadState();
+
+  if(act){
+    state.activeMotoId=act;
+    saveState(state);
+    // Ir a Inicio (como pediste)
+    showScreen("inicio");
+  }
+  if(edit){
+    const m = state.motos.find(x=>x.id===edit);
+    if(m){
+      // Abrir formulario precargado
+      openMotoForm('edit', m);
+      // Asegurar que las cajas FREE/PRO se vean bien según plan
+      try{ render(); }catch(e){}
+    }
+  }
+
+
+  if(del){
+    if(!confirm("¿Eliminar esta moto?")) return;
+    const idx = state.motos.findIndex(m=>m.id===del);
+    if(idx>=0) state.motos.splice(idx,1);
+
+    // ✅ CAMBIO: ahora SÍ permitimos quedar sin motos (para FREE poder cambiarla)
+    if(state.motos.length===0){
+      state.activeMotoId = null;
+    } else if(state.activeMotoId===del){
+      state.activeMotoId = state.motos[0].id;
+    }
+
+    saveState(state); render();
+  }
+});
+
+/* PRO toggle */
+document.getElementById("proToggle").addEventListener("change",(e)=>{
+  const state=loadState();
+  state.pro = (e.target.value==="1");
+  saveState(state);
+  render();
+});
+
+/* About */
+document.getElementById("btnAbout").addEventListener("click", ()=>{
+  const box=document.getElementById("aboutBox");
+  box.style.display = (box.style.display==="none"||!box.style.display) ? "" : "none";
+});
+
+/* Registro rápido */
+document.getElementById("btnRegistrar_reg").addEventListener("click", ()=>{
+  const state=loadState();
+  const moto = state.motos.find(m=>m.id===state.activeMotoId);
+  if(!moto){ alert("No hay moto activa."); return; }
+
+  const id = document.getElementById("comp_reg").value;
+  const fecha = document.getElementById("fecha_reg").value;
+  const kmU = km(document.getElementById("kmUlt_reg").value);
+  const obs = (document.getElementById("obs_reg").value||"").trim();
+  const costo = km(document.getElementById("costo_reg").value);
+
+  // Soporte "Otro…": crea el componente dentro de la moto para que aparezca en Estado
+  let idFinal = id;
+  if(id === "__otro__"){
+    const inp = document.getElementById("comp_otro_reg");
+    const nombreOtro = (inp ? inp.value : "").trim();
+    if(!nombreOtro){
+      alert("Escribe el nombre del componente.");
+      return;
+    }
+    // ID estable (depende del nombre)
+    const base = nombreOtro.toLowerCase().replace(/\s+/g," ").slice(0,60);
+    const hash = Array.from(base).reduce((a,c)=>((a<<5)-a)+c.charCodeAt(0),0);
+    const newId = "custom_" + Math.abs(hash);
+
+    if(!moto.items[newId]){
+      const DEFAULT_CUSTOM_KM = 3000; // intervalo por defecto para personalizados
+      const kmInp = document.getElementById("comp_otro_km");
+      const kmVal = km(kmInp ? kmInp.value : "");
+      const sug = suggestKmForCustomName(moto, nombreOtro);
+      const customKm = (kmVal && kmVal > 0) ? kmVal : ((sug && sug>0) ? sug : DEFAULT_CUSTOM_KM);
+
+      moto.items[newId] = {
+        id: newId,
+        nombre: nombreOtro,
+        intervaloKm: customKm,
+        intervaloMeses: null,
+        fecha: "",
+        kmUlt: null,
+        obs: ""
+      };
+    }
+    idFinal = newId;
+  }
+
+  if(!id){ alert("Selecciona un componente."); return; }
+  if(!fecha){ alert("Pon la fecha."); return; }
+  if(kmU===null || kmU<0){ alert("Pon el km cuando se hizo."); return; }
+
+  if(!moto.items[idFinal]){ alert("Componente no válido."); return; }
+
+  moto.items[idFinal].fecha = fecha;
+  moto.items[idFinal].kmUlt = kmU;
+  moto.items[idFinal].obs = obs;
+
+  state.log = state.log || [];
+  state.log.push({
+    fecha,
+    moto: moto.nombre,
+    tipo: "Mantenimiento",
+    detalle: moto.items[idFinal].nombre + (obs ? " — " + obs : ""),
+    km: kmU,
+    costo: (costo===null || costo<0) ? null : Number(costo),
+    creado: ahoraISO()
+  });
+
+  if(moto.kmActual===null || moto.kmActual===undefined) moto.kmActual = kmU;
+
+  saveState(state); render();
+  notifyOk("Mantenimiento registrado.");
+  document.getElementById("kmUlt_reg").value="";
+  document.getElementById("obs_reg").value="";
+  document.getElementById("costo_reg").value="";
+  const selComp = document.getElementById("comp_reg");
+  if(selComp) selComp.value = idFinal;
+  const wrapOtro2 = document.getElementById("compOtroWrap");
+  const inpOtro2 = document.getElementById("comp_otro_reg");
+  if(wrapOtro2 && inpOtro2){ wrapOtro2.style.display="none"; inpOtro2.value=""; }
+  const inpKm2 = document.getElementById("comp_otro_km");
+  if(inpKm2) inpKm2.value="";
+
+});
+document.getElementById("btnLimpiarReg_reg").addEventListener("click", ()=>{
+  document.getElementById("kmUlt_reg").value="";
+  document.getElementById("obs_reg").value="";
+  document.getElementById("costo_reg").value="";
+  document.getElementById("fecha_reg").value=hoyISO();
+});
+
+/* Respaldo JSON */
+document.getElementById("btnExportJson").addEventListener("click", ()=>{
+  const state=loadState();
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=`mimotoaldia-respaldo-${hoyISO()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+document.getElementById("importFile").addEventListener("change", async (e)=>{
+  const file=(e.target.files && e.target.files[0]);
+  if(!file) return;
+  try{
+    const text=await file.text();
+    const obj=JSON.parse(text);
+    if(!obj || typeof obj!=="object" || !Array.isArray(obj.motos)) throw new Error("Formato inválido");
+    localStorage.setItem(KEY, JSON.stringify(obj));
+    render();
+    notifyOk("Respaldo importado.");
+  }catch(err){
+    alert("No pude importar. Debe ser un JSON exportado por esta app.");
+  }
+  e.target.value="";
+});
+
+/* Reset */
+document.getElementById("btnReset").addEventListener("click", ()=>{
+  if(!confirm("¿Seguro? Esto borra todo lo guardado.")) return;
+  localStorage.removeItem(KEY);
+  render();
+});
+
+/* Export XLS (igual que antes, mantenido) */
+document.getElementById("btnExportXls").addEventListener("click", exportarXls);
+
+/* ===== Combustible: navegación y acciones ===== */
+document.getElementById("goCombustible") && document.getElementById("goCombustible").addEventListener("click", ()=>{
+  // Prefill: usar el Km actual si está en Inicio
+  const kmInput = document.getElementById("kmActual");
+  const fuelKm = document.getElementById("fuelKm");
+  if(kmInput && fuelKm && kmInput.value && !fuelKm.value){
+    fuelKm.value = kmInput.value;
+  }
+  showScreen("combustible");
+});
+document.getElementById("btnFuelGuardar") && document.getElementById("btnFuelGuardar").addEventListener("click", ()=>{
+  const state = loadState();
+  const moto = (state.motos||[]).find(m=>m.id===state.activeMotoId) || (state.motos||[])[0] || null;
+  const fecha = (document.getElementById("fuelFecha").value || hoyISO());
+  const kmVal = km(document.getElementById("fuelKm").value);
+  const valor = km(document.getElementById("fuelValor").value);
+  const cant = km(document.getElementById("fuelCant").value);
+  const unidad = (document.getElementById("fuelUnidad").value || "L");
+
+  if(kmVal===null || kmVal<0){
+    notifyLate("Ingresa un kilometraje válido.");
+    return;
+  }
+  if(valor===null || valor<=0){
+    notifyLate("Ingresa un valor pagado válido.");
+    return;
+  }
+
+  const list = (state.fuelLog||[]).slice().sort((a,b)=>Number(a.km||0)-Number(b.km||0));
+  const last = list.length ? list[list.length-1] : null;
+
+  if(last && Number(kmVal) <= Number(last.km||0)){
+    notifyLate("El kilometraje debe ser mayor que la última tanqueada para calcular bien.");
+    return;
+  }
+
+  const entry = {
+    id: uid(),
+    fecha,
+    km: Number(kmVal),
+    valor: (valor===null||valor<=0)? null : Number(valor),
+    cant: (cant===null||cant<=0)? null : Number(cant),
+    unidad: unidad,
+    lleno: !!(document.getElementById("fuelLleno") && document.getElementById("fuelLleno").checked),
+    creado: ahoraISO(),
+    motoId: (state.activeMotoId||null)
+  };
+
+  state.fuelLog = (state.fuelLog||[]);
+  state.fuelLog.push(entry);
+
+  // Registrar también en la bitácora general (menú "Historial")
+  // para que el usuario vea combustible junto con mantenimiento.
+  state.log = (state.log||[]);
+  state.log.push({
+    id: `fuel_${entry.id}`,
+    fuelId: entry.id,
+    fecha: entry.fecha,
+    moto: (moto && moto.nombre) ? moto.nombre : "",
+    tipo: "Combustible",
+    detalle: `Tanqueada${entry.cant!=null ? ` ${entry.cant} ${entry.unidad==="gal"?"gal":"L"}` : ""}${entry.lleno ? " (tanque lleno)" : ""}`,
+    km: entry.km,
+    costo: (entry.valor==null?0:entry.valor),
+    creado: entry.creado
+  });
+  saveState(state);
+
+  // Avisos suaves si falta cantidad
+  if(entry.cant==null){
+    if(entry.lleno){
+      notifySoon("Guardado. Marcaste tanque lleno, pero sin cantidad no se calcula rendimiento.");
+    }else{
+      notifySoon("Guardado. Sin cantidad no se calcula rendimiento.");
+    }
+  }
+
+  if(last){
+    const deltaKm = entry.km - Number(last.km||0);
+    if(Number.isFinite(deltaKm) && deltaKm>0){
+      let msg = `Tanqueada guardada. Recorrido: ${new Intl.NumberFormat("es-CO").format(deltaKm)} km`;
+      if(entry.cant!=null){
+        msg += ` • Rend: ${(deltaKm/entry.cant).toFixed(2)} km/${entry.unidad==="gal"?"gal":"L"}`;
+      }
+      if(entry.valor!=null){
+        msg += ` • Costo: $${new Intl.NumberFormat("es-CO").format(Math.round(entry.valor/deltaKm))}/km`;
+      }
+      notifyOk(msg);
+    } else {
+      notifySoon("Tanqueada guardada. Ojo: el km no es mayor que el anterior.");
+    }
+  } else {
+    notifyOk("Primera tanqueada guardada.");
+  }
+
+  document.getElementById("fuelFecha").value = hoyISO();
+  document.getElementById("fuelKm").value = "";
+  document.getElementById("fuelValor").value = "";
+  document.getElementById("fuelCant").value = "";
+  document.getElementById("fuelUnidad").value = "L";
+  render();
+});
+
+// Auto-sugerir cantidad cuando marcas "Tanque lleno" (usa capacidad de la moto si existe)
+function maybePrefillFuelFromTankCap(){
+  const state = loadState();
+  const moto = (state.motos||[]).find(m=>m.id===state.activeMotoId) || (state.motos||[])[0] || null;
+  const chk = document.getElementById("fuelLleno");
+  const cantEl = document.getElementById("fuelCant");
+  const unitEl = document.getElementById("fuelUnidad");
+  if(!chk || !cantEl || !unitEl) return;
+  if(!chk.checked) return;
+  if(String(cantEl.value||"").trim()!=="") return;
+  if(!moto || !moto.tankCap || !moto.tankUnit) {
+    notifySoon("Tip: define la capacidad del tanque en Motos para autollenar la cantidad.");
+    return;
+  }
+  const GAL_TO_L = 3.78541;
+  let v = Number(moto.tankCap);
+  if(!Number.isFinite(v) || v<=0) return;
+  const from = moto.tankUnit;
+  const to = unitEl.value || "L";
+  if(from===to){
+    // ok
+  } else if(from==="gal" && to==="L"){
+    v = v * GAL_TO_L;
+  } else if(from==="L" && to==="gal"){
+    v = v / GAL_TO_L;
+  }
+  cantEl.value = (Math.round(v*100)/100).toString();
+  notifyOk("Cantidad sugerida según capacidad del tanque (editable)." );
+}
+const _fuelLleno = document.getElementById("fuelLleno");
+const _fuelUnidad = document.getElementById("fuelUnidad");
+if(_fuelLleno) _fuelLleno.onchange = maybePrefillFuelFromTankCap;
+if(_fuelUnidad) _fuelUnidad.onchange = maybePrefillFuelFromTankCap;
+
+document.getElementById("btnFuelBorrarTodo") && document.getElementById("btnFuelBorrarTodo").addEventListener("click", ()=>{
+  if(!confirm("¿Borrar todos los registros de combustible?")) return;
+  const state = loadState();
+  state.fuelLog = [];
+  // Si ya se habían registrado tanqueadas en la bitácora general, las quitamos también
+  if(Array.isArray(state.log)){
+    state.log = state.log.filter(r => !(r && (r.tipo==="Combustible" || r.fuelId)));
+  }
+  saveState(state);
+  notifyOk("Registros de combustible borrados.");
+  render();
+});
+
+async function exportarXls(){
+  // Exporta el historial (log) a .xls (HTML table). Funciona en navegador y en Android intenta "Compartir" si no se puede descargar.
+  const state = loadState();
+  const rows = Array.isArray(state.log) ? state.log : [];
+
+  const pad = (n)=>String(n).padStart(2,"0");
+  const d = new Date();
+  const ymd = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const filename = `MiMotoAlDia_Historial_${ymd}.xls`;
+
+  const escHtml = (s)=>String(s == null ? "" : s).replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m]));
+  const fmtDate = (iso)=>{
+    if(!iso) return "";
+    const dt = new Date(iso);
+    if(isNaN(dt)) return String(iso);
+    return `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+  };
+
+  const header = ["Fecha","Moto","Tipo","Detalle","Km","Registrado"];
+  const trHead = "<tr>" + header.map(h=>`<th>${escHtml(h)}</th>`).join("") + "</tr>";
+
+  const trBody = rows.map(r=>{
+    const moto = r.motoNombre || r.moto || "";
+    const tipo = r.tipo || "";
+    const detalle = r.detalle || r.item || "";
+    const km = (nn(nn(r.km, r.kilometraje), ""));
+    const fecha = fmtDate(r.fecha || r.ts || r.createdAt);
+    const registrado = (r.registrado === false) ? "No" : "Sí";
+    return "<tr>" + [fecha,moto,tipo,detalle,km,registrado].map(v=>`<td>${escHtml(v)}</td>`).join("") + "</tr>";
+  }).join("");
+
+  const htmlXls =
+`<html>
+<head>
+<meta charset="utf-8"/>
+</head>
+<body>
+<table border="1">
+${trHead}
+${trBody}
+</table>
+</body>
+</html>`;
+
+  const blob = new Blob([htmlXls], {type: "application/vnd.ms-excel;charset=utf-8"});
+
+  // 1) Intentar compartir (Android) si está disponible
+  try{
+    if(navigator.share){
+      const file = new File([blob], filename, {type: blob.type});
+      if(!navigator.canShare || navigator.canShare({files:[file]})){
+        await navigator.share({files:[file], title:"Mi Moto al Día", text:"Historial (.xls)"});
+        return;
+      }
+    }
+  }catch(e){
+    // si falla, seguimos con descarga normal
+    console.log("share failed", e);
+  }
+
+  // 2) Descarga normal (navegador)
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 500);
+}
+
+/* Init */
+(function init(){
+  showScreen("inicio");
+})();
+
+// ===== Drawer (Menú) =====
+(function(){
+  const drawer = document.getElementById('drawer');
+  const backdrop = document.getElementById('drawerBackdrop');
+  const openBtn = document.getElementById('openMenu');
+  const closeBtn = document.getElementById('closeMenu');
+  if(!drawer || !backdrop || !openBtn || !closeBtn) return;
+
+  function openMenu(){
+    window.openDrawerMenu = openMenu;
+    backdrop.style.display = 'block';
+    drawer.classList.add('open');
+    drawer.setAttribute('aria-hidden','false');
+  }
+  function closeMenu(){
+    drawer.classList.remove('open');
+    drawer.setAttribute('aria-hidden','true');
+    // espera la animación
+    setTimeout(()=>{ backdrop.style.display = 'none'; }, 180);
+  }
+
+  openBtn.addEventListener('click', openMenu);
+  closeBtn.addEventListener('click', closeMenu);
+  backdrop.addEventListener('click', closeMenu);
+
+  const goAjustes = document.getElementById('menuGoAjustes');
+  const goComb = document.getElementById('menuGoCombustible');
+  const exportXls = document.getElementById('menuExportXls');
+  const about = document.getElementById('menuAbout');
+
+  if(goAjustes) goAjustes.addEventListener('click', ()=>{ closeMenu(); showScreen('ajustes'); });
+  if(goComb) goComb.addEventListener('click', ()=>{ closeMenu(); showScreen('combustible'); });
+  if(exportXls) exportXls.addEventListener('click', ()=>{ closeMenu(); exportarXls && exportarXls(); });
+  if(about) about.addEventListener('click', ()=>{ closeMenu(); showScreen('acerca'); });
+})();
+
+// ===== UI extra: FAB + Acerca de =====
+(function(){
+  const fab = document.getElementById("fabAdd");
+  if(fab) fab.addEventListener("click", ()=> showScreen("registro"));
+
+  const aboutBack = document.getElementById("aboutBack");
+  if(aboutBack) aboutBack.addEventListener("click", ()=> showScreen("inicio"));
+
+  const btnCopy = document.getElementById("btnCopySupport");
+  const emailEl = document.getElementById("supportEmail");
+  if(btnCopy && emailEl){
+    btnCopy.addEventListener("click", async ()=>{
+      const mail = (emailEl.textContent||"").trim();
+      try{
+        await navigator.clipboard.writeText(mail);
+        notifyOk("Correo copiado: " + mail);
+      }catch(e){
+        // fallback
+        const ta = document.createElement("textarea");
+        ta.value = mail; document.body.appendChild(ta);
+        ta.select(); try{ document.execCommand("copy"); }catch(_){}
+        ta.remove();
+        notifyOk("Correo copiado: " + mail);
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>
